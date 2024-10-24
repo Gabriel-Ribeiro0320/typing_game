@@ -25,24 +25,29 @@ right_hand_image = pygame.transform.scale(right_hand_image, (150, 150))
 left_hand_pos = (100, 425)
 right_hand_pos = (550, 425)
 
-# arrow image (red arrow for typing indication)
+# arrow images (red arrow for typing indication)
 
-arrow_image = pygame.image.load("assets/arrow.png")
-arrow_image = pygame.transform.scale(arrow_image, (50, 50))
+left_hand_arrow_image = pygame.image.load("assets/right_arrow.png")
+right_hand_arrow_image = pygame.image.load("assets/left_arrow.png")
+left_hand_arrow_image = pygame.transform.scale(left_hand_arrow_image, (50, 50))
+right_hand_arrow_image = pygame.transform.scale(right_hand_arrow_image, (50, 50))
 
 # define arrow positions for each finger (left hand and right hand)
 
-arrow_positions = {
+arrow_positions_left = {
     "left_pinky": (42, 417),
     "left_ring": (65, 385),
     "left_middle": (87, 370),
     "left_index": (123, 370),
-    "left_thumb": (0, 0),
-    "right_index": (500, 400),
-    "right_middle": (560, 400),
-    "right_ring": (620, 400),
-    "right_pinky": (680, 400),
-    "right_thumb": (0, 0),
+    "left_thumb": (183, 405),
+}
+
+arrow_positions_right = {
+    "right_index": (627, 364),
+    "right_middle": (668, 367),
+    "right_ring": (685, 382),
+    "right_pinky": (710, 415),
+    "right_thumb": (567, 400),
 }
 
 # map keys to respective fingers (touch typing)
@@ -62,15 +67,19 @@ key_to_finger = {
     pygame.K_i: "right_middle", pygame.K_k: "right_middle",
     pygame.K_o: "right_ring", pygame.K_l: "right_ring",
     pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky",
+
+    # thumbs (spacebar)
+
+    pygame.K_SPACE: "left_thumb"  # Can assign both hands to spacebar if needed
 }
 
-# game state
+# game status
 
 initial_menu = 0
 game = 1
 end_menu = 2
 
-# first game state
+# initial status
 
 game_status = initial_menu
 
@@ -80,9 +89,11 @@ font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
 
-# to store current arrow position based on the key press
+# to store current arrow position and which hand is used based on the key press
 
 current_arrow_pos = None
+current_hand_arrow = None  # store which arrow (left or right hand) to display
+
 
 def initial_menu_function():
     screen.fill(BLACK)
@@ -99,13 +110,20 @@ def game_function():
     screen.blit(text1, (15, 10))
 
     # display hands images
+
     screen.blit(left_hand_image, left_hand_pos)
     screen.blit(right_hand_image, right_hand_pos)
 
-    # if an arrow should be displayed, blit it on the correct finger
+    # if an arrow should be displayed, blit it on the correct hand and finger
 
     if current_arrow_pos:
-        screen.blit(arrow_image, current_arrow_pos)
+        if current_hand_arrow == "both":  # if spacebar is pressed, show arrows for both thumbs
+            screen.blit(left_hand_arrow_image, current_arrow_pos[0])
+            screen.blit(right_hand_arrow_image, current_arrow_pos[1])
+        elif current_hand_arrow == "left":
+            screen.blit(left_hand_arrow_image, current_arrow_pos)
+        elif current_hand_arrow == "right":
+            screen.blit(right_hand_arrow_image, current_arrow_pos)
 
     pygame.display.flip()
 
@@ -125,7 +143,6 @@ running = True
 while running:
 
     # verify events
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -137,10 +154,21 @@ while running:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
                 else:
+
                     # check if the pressed key corresponds to a finger
+
                     finger = key_to_finger.get(event.key)
                     if finger:
-                        current_arrow_pos = arrow_positions[finger]  # update arrow position
+                        if event.key == pygame.K_SPACE:
+                            current_arrow_pos = (
+                                arrow_positions_left["left_thumb"], arrow_positions_right["right_thumb"])
+                            current_hand_arrow = "both"
+                        elif "left" in finger:
+                            current_arrow_pos = arrow_positions_left[finger]
+                            current_hand_arrow = "left"
+                        elif "right" in finger:
+                            current_arrow_pos = arrow_positions_right[finger]
+                            current_hand_arrow = "right"
 
             elif game_status == end_menu:
                 if event.key == pygame.K_r:
