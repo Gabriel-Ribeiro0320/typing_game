@@ -15,6 +15,21 @@ pygame.display.set_caption("TYPING GAME")
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+# hands images
+left_hand_image = pygame.image.load("assets/left_hand.png")
+right_hand_image = pygame.image.load("assets/right_hand.png")
+left_hand_image = pygame.transform.scale(left_hand_image, (150, 150))
+right_hand_image = pygame.transform.scale(right_hand_image, (150, 150))
+left_hand_pos = (100, 425)
+right_hand_pos = (550, 425)
+
+# arrow images
+
+arrow_image = pygame.image.load("assets/arrow.png")
+arrow_image = pygame.transform.scale(arrow_image, (50, 50))
+arrow_pos = (50, 50)
+
+
 # game state
 
 initial_menu = 0
@@ -44,6 +59,8 @@ def game_function():
     screen.fill(BLACK)
     text1 = font2.render("PRESS ESC TO QUIT", True, WHITE)
     screen.blit(text1, (15, 10))
+    screen.blit(left_hand_image, left_hand_pos)
+    screen.blit(right_hand_image, right_hand_pos)
     pygame.display.flip()
 
 
