@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -13,6 +14,7 @@ pygame.display.set_caption("TYPING GAME")
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 GRAY = (200, 200, 200)
 DARK_GRAY = (50, 50, 50)
 
@@ -78,6 +80,21 @@ key_to_finger = {
     pygame.K_SPACE: "left_thumb"
 }
 
+def load_words_from_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            words = file.read().splitlines()  # Lê o arquivo e divide por linhas
+        return words
+    except FileNotFoundError:
+        print("Arquivo de palavras não encontrado!")
+        return []
+
+word_list = load_words_from_file('assets/br-sem-acentos.txt')
+
+
+current_word = random.choice(word_list) if word_list else "No words"
+user_input = ""
+
 
 # Function to draw a key on the screen
 
@@ -97,6 +114,14 @@ def draw_centered_text_block():
     y_pos = 50
 
     pygame.draw.rect(screen, WHITE, (x_pos, y_pos, block_width, block_height), border_radius=10)
+
+    text_surface = font1.render(current_word, True, BLACK)
+    text_rect = text_surface.get_rect(center=(x_pos + block_width // 2, y_pos + block_height // 3))
+    screen.blit(text_surface, text_rect)
+
+    user_input_surface = font1.render(user_input, True, GREEN)
+    user_input_rect = user_input_surface.get_rect(center=(x_pos + block_width // 2, y_pos + 2 * block_height // 3))
+    screen.blit(user_input_surface, user_input_rect)
 
 
 # Function to draw the keyboard layout
@@ -159,6 +184,15 @@ while running:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
                 else:
+                    if event.unicode.isalpha():
+                        user_input += event.unicode
+                    elif event.key == pygame.K_BACKSPACE:
+                        user_input = user_input[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if user_input == current_word:
+                            user_input = ""
+                            current_word = random.choice(
+                                word_list) if word_list else "No words"
                     finger = key_to_finger.get(event.key)
                     if finger:
                         if event.key == pygame.K_SPACE:
