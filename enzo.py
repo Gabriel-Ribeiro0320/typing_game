@@ -61,16 +61,18 @@ arrow_positions_right = {
 key_to_finger = {
 
     # left hand keys
-    pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky",
-    pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring",
-    pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle",
-    pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index",
-
+    pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky", pygame.K_1: "left_pinky",
+    pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring", pygame.K_2: "left_ring",
+    pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle", pygame.K_3: "left_middle",
+    pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index", pygame.K_4: "left_index",
+    pygame.K_t: "left_index", pygame.K_g: "left_index", pygame.K_b: "left_index", pygame.K_5: "left_index",
     # right hand keys
-    pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index",
-    pygame.K_i: "right_middle", pygame.K_k: "right_middle",
-    pygame.K_o: "right_ring", pygame.K_l: "right_ring",
-    pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky",
+    pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
+    pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
+    pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
+    pygame.K_o: "right_ring", pygame.K_l: "right_ring", pygame.K_9: "right_ring",
+    pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky", pygame.K_0: "right_pinky",
+
 
     # thumbs (spacebar)
     pygame.K_SPACE: "left_thumb"
