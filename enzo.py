@@ -87,6 +87,15 @@ def draw_key(x, y, width, height, text, color=GRAY):
     text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
     screen.blit(text_surface, text_rect)
 
+#Function to draw letters
+def draw_centered_text_block():
+    block_width = 500
+    block_height = 200
+    x_pos = 350
+    y_pos = 50
+
+    pygame.draw.rect(screen, WHITE, (x_pos, y_pos, block_width, block_height), border_radius=10)
+
 
 # Function to draw the keyboard layout
 
@@ -181,6 +190,7 @@ while running:
         screen.blit(left_hand_image, left_hand_pos)
         screen.blit(right_hand_image, right_hand_pos)
         draw_keyboard()
+        draw_centered_text_block()
 
         if current_arrow_pos:
             if current_hand_arrow == "both":
