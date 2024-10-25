@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -13,6 +14,7 @@ pygame.display.set_caption("TYPING GAME")
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 GRAY = (200, 200, 200)
 DARK_GRAY = (50, 50, 50)
 
@@ -61,20 +63,38 @@ arrow_positions_right = {
 key_to_finger = {
 
     # left hand keys
-    pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky",
-    pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring",
-    pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle",
-    pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index",
-
+    pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky", pygame.K_1: "left_pinky",
+    pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring", pygame.K_2: "left_ring",
+    pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle", pygame.K_3: "left_middle",
+    pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index", pygame.K_4: "left_index",
+    pygame.K_t: "left_index", pygame.K_g: "left_index", pygame.K_b: "left_index", pygame.K_5: "left_index",
     # right hand keys
-    pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index",
-    pygame.K_i: "right_middle", pygame.K_k: "right_middle",
-    pygame.K_o: "right_ring", pygame.K_l: "right_ring",
-    pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky",
+    pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
+    pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
+    pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
+    pygame.K_o: "right_ring", pygame.K_l: "right_ring", pygame.K_9: "right_ring",
+    pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky", pygame.K_0: "right_pinky",
+
 
     # thumbs (spacebar)
     pygame.K_SPACE: "left_thumb"
 }
+
+def load_words_from_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            words = file.read().splitlines()  # Lê o arquivo e divide por linhas
+        return words
+    except FileNotFoundError:
+        print("Arquivo de palavras não encontrado!")
+        return []
+
+word_list = load_words_from_file('assets/br-sem-acentos.txt')
+
+
+current_word = random.choice(word_list) if word_list else "No words"
+user_input = ""
+
 
 # Function to draw a key on the screen
 
@@ -86,17 +106,35 @@ def draw_key(x, y, width, height, text, color=GRAY):
     text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
     screen.blit(text_surface, text_rect)
 
+#Function to draw letters
+def draw_centered_text_block():
+    block_width = 500
+    block_height = 200
+    x_pos = 350
+    y_pos = 50
+
+    pygame.draw.rect(screen, WHITE, (x_pos, y_pos, block_width, block_height), border_radius=10)
+
+    text_surface = font1.render(current_word, True, BLACK)
+    text_rect = text_surface.get_rect(center=(x_pos + block_width // 2, y_pos + block_height // 3))
+    screen.blit(text_surface, text_rect)
+
+    user_input_surface = font1.render(user_input, True, GREEN)
+    user_input_rect = user_input_surface.get_rect(center=(x_pos + block_width // 2, y_pos + 2 * block_height // 3))
+    screen.blit(user_input_surface, user_input_rect)
+
+
 # Function to draw the keyboard layout
 
 def draw_keyboard():
     keys = [
         ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
-            'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
+         'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
         ['`', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', '0', '-', '=', 'Backspace'],
+         '8', '9', '0', '-', '=', 'Backspace'],
         ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
         ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H',
-            'J', 'K', 'L', ';', '\'', 'Enter'],
+         'J', 'K', 'L', ';', '\'', 'Enter'],
         ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
         ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Fn', 'Ctrl']
     ]
@@ -123,6 +161,12 @@ def draw_keyboard():
             x_offset += width + spacing
         y_offset += key_height + spacing
 
+# Tempo máximo para preencher a barra em segundos
+time_limit = 10
+
+# Variável para armazenar o tempo inicial
+start_time = pygame.time.get_ticks() / 1000  # Converte para segundos
+
 
 # game status
 initial_menu = 0
@@ -130,10 +174,13 @@ game = 1
 end_menu = 2
 game_status = initial_menu
 
+# Timer setup for progress bar
+time_limit = 10  # 10 seconds to fill the bar
+start_time = pygame.time.get_ticks() / 1000  # Convert milliseconds to seconds
+
 # game loop
 running = True
 while running:
-
     # verify events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -146,6 +193,15 @@ while running:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
                 else:
+                    if event.unicode.isalpha():
+                        user_input += event.unicode
+                    elif event.key == pygame.K_BACKSPACE:
+                        user_input = user_input[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if user_input == current_word:
+                            user_input = ""
+                            current_word = random.choice(
+                                word_list) if word_list else "No words"
                     finger = key_to_finger.get(event.key)
                     if finger:
                         if event.key == pygame.K_SPACE:
@@ -166,7 +222,7 @@ while running:
                 elif event.key == pygame.K_q:
                     running = False
 
-    
+
     if game_status == initial_menu:
         screen.fill(BLACK)
         text1 = font1.render("TYPING GAME", True, WHITE)
@@ -175,11 +231,38 @@ while running:
         screen.blit(text2, (325, 300))
     elif game_status == game:
         screen.fill(BLACK)
+        # Parâmetros da barra de progresso
+        progress_bar_x = 400  # Posição X da barra
+        progress_bar_y = 300 # Posição Y da barra
+        progress_bar_max_width = 300 # Largura total da barra quando completa
+        progress_bar_height = 30  # Altura da barra
+
+        # Cálculo e desenho da barra de progresso na horizontal
+        elapsed_time = pygame.time.get_ticks() / 1000 - start_time  # Tempo decorrido em segundos
+        progress_width = min(int((elapsed_time / time_limit) * progress_bar_max_width), progress_bar_max_width)  # Largura da barra baseada no tempo
+        pygame.draw.rect(screen, WHITE, (progress_bar_x, progress_bar_y, progress_bar_max_width, progress_bar_height))
+        pygame.draw.rect(screen, GREEN, (progress_bar_x, progress_bar_y, progress_width, progress_bar_height))  # Desenha a barra na tela
+
         text1 = font2.render("PRESS ESC TO QUIT", True, WHITE)
         screen.blit(text1, (15, 10))
         screen.blit(left_hand_image, left_hand_pos)
         screen.blit(right_hand_image, right_hand_pos)
-        draw_keyboard()  
+        draw_keyboard()
+        draw_centered_text_block()
+
+        # Texto para exibir as informações desejadas no canto superior esquerdo
+        lesson_text = font2.render("Lição 1", True, WHITE)
+        screen.blit(lesson_text, (30, 50))  # Posiciona "Lição 1" no topo
+
+        score_text = font2.render("Aproveitamento: 100", True, WHITE)
+        screen.blit(score_text, (30, 70))  # Posiciona "Aproveitamento: 100" logo abaixo
+
+        correct_text = font2.render("Acertos: 0", True, WHITE)
+        screen.blit(correct_text, (30, 90))  # Posiciona "Acertos: 0" abaixo do aproveitamento
+
+        mistakes_text = font2.render("Erros: 0", True, WHITE)
+        screen.blit(mistakes_text, (30, 110))  # Posiciona "Erros: 0" abaixo dos acertos
+
 
         if current_arrow_pos:
             if current_hand_arrow == "both":
