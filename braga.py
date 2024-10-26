@@ -5,12 +5,14 @@ import random
 pygame.init()
 
 # screen variables
+
 screen_width = 1200
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("TYPING GAME")
 
 # colors
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -19,6 +21,7 @@ GRAY = (200, 200, 200)
 DARK_GRAY = (50, 50, 50)
 
 # fonts
+
 font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
@@ -27,14 +30,16 @@ font_key = pygame.font.SysFont(None, 20)
 current_arrow_pos = None
 
 # hands images
+
 left_hand_image = pygame.image.load("assets/left_hand.png")
 right_hand_image = pygame.image.load("assets/right_hand.png")
 left_hand_image = pygame.transform.scale(left_hand_image, (150, 150))
 right_hand_image = pygame.transform.scale(right_hand_image, (150, 150))
-left_hand_pos = (55, 425)
-right_hand_pos = (980, 425)
+left_hand_pos = (45, 325)
+right_hand_pos = (1005, 325)
 
 # arrow images (red arrow for typing indication)
+
 left_hand_arrow_image = pygame.image.load("assets/right_arrow.png")
 right_hand_arrow_image = pygame.image.load("assets/left_arrow.png")
 left_hand_arrow_image = pygame.transform.scale(left_hand_arrow_image, (50, 50))
@@ -42,6 +47,7 @@ right_hand_arrow_image = pygame.transform.scale(
     right_hand_arrow_image, (50, 50))
 
 # define arrow positions for each finger (left hand and right hand)
+
 arrow_positions_left = {
     "left_pinky": (6, 417),
     "left_ring": (30, 375),
@@ -75,28 +81,29 @@ key_to_finger = {
     pygame.K_o: "right_ring", pygame.K_l: "right_ring", pygame.K_9: "right_ring",
     pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky", pygame.K_0: "right_pinky",
 
-
     # thumbs (spacebar)
+
     pygame.K_SPACE: "left_thumb"
 }
+
 
 def load_words_from_file(filename):
     try:
         with open(filename, 'r') as file:
-            words = file.read().splitlines()  # Lê o arquivo e divide por linhas
+            words = file.read().splitlines()
         return words
     except FileNotFoundError:
         print("Arquivo de palavras não encontrado!")
         return []
 
-word_list = load_words_from_file('assets/br-sem-acentos.txt')
 
+word_list = load_words_from_file('assets/br-sem-acentos.txt')
 
 current_word = random.choice(word_list) if word_list else "No words"
 user_input = ""
 
 
-# Function to draw a key on the screen
+# function to draw a key on the screen
 
 def draw_key(x, y, width, height, text, color=GRAY):
     pygame.draw.rect(screen, color, (x, y, width, height), border_radius=5)
@@ -106,7 +113,9 @@ def draw_key(x, y, width, height, text, color=GRAY):
     text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
     screen.blit(text_surface, text_rect)
 
-#Function to draw letters
+
+# function to draw letters
+
 def draw_centered_text_block():
     block_width = 500
     block_height = 200
@@ -124,64 +133,80 @@ def draw_centered_text_block():
     screen.blit(user_input_surface, user_input_rect)
 
 
-# Function to draw the keyboard layout
+# function to draw the keyboard layout
 
 def draw_keyboard():
     keys = [
-        ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
-         'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
-        ['`', '1', '2', '3', '4', '5', '6', '7',
-         '8', '9', '0', '-', '=', 'Backspace'],
-        ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
-        ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H',
-         'J', 'K', 'L', ';', '\'', 'Enter'],
-        ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
+        ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12','Ins','Del'],
+        ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+        ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '´', ']', '{', '}'],
+        ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç', ']', 'Enter'],
+        ['Shift', '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', ';', '?','/'],
         ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Fn', 'Ctrl']
     ]
 
-    key_width = 40
-    key_height = 30
-    spacing = 5
+    key_width = 40  # Standard width for keys
+    key_height = 30  # Standard height for keys
+    spacing = 2  # Space between keys
 
-    y_offset = 360
+    y_offset = 360  # Starting y position for the keyboard
     for row_index, row in enumerate(keys):
-        x_offset = 280
+        x_offset = 280  # Reset x_offset for each row
+
         for key in row:
+            # Adjust widths for special keys
             if key == 'Backspace':
-                width = key_width * 2
-            elif key == 'Tab' or key == 'CapsLock' or key == 'Enter':
-                width = key_width * 1.5
-            elif key == 'Shift':
-                width = key_width * 2
+                width = key_width * 2.05
+            elif key == 'Tab':
+                width = key_width * 1 
+            elif key == 'CapsLock':
+                width = key_width * 1.75
+            elif key == 'Enter':
+                width = key_width * 2.35
+                height = key_height * 1.5
+            elif key == 'Shift' and row_index == 4 and row.index(key) == 0:
+                width = key_width * 2.05
+            elif key == 'Shift' and row_index == 4 and row.index(key) == len(row) - 1:
+                width = key_width * 2.05
             elif key == ' ':
-                width = key_width * 5
+                width = key_width * 7.3
+            elif key == 'Ctrl':
+                width = key_width * 2.05
             else:
                 width = key_width
-            draw_key(x_offset, y_offset, width, key_height, key)
+
+            # Draw clean key with no border or extra details
+            pygame.draw.rect(screen, (150, 150, 150), (x_offset, y_offset, width, key_height))
+            text_surface = font2.render(key, True, (0, 0, 0))  # Black text for contrast
+            text_rect = text_surface.get_rect(center=(x_offset + width / 2, y_offset + key_height / 2))
+            screen.blit(text_surface, text_rect)
+
+            # Increment x_offset for the next key
             x_offset += width + spacing
+
+        # After drawing a row, increment y_offset
         y_offset += key_height + spacing
-
-# Tempo máximo para preencher a barra em segundos
-time_limit = 10
-
-# Variável para armazenar o tempo inicial
-start_time = pygame.time.get_ticks() / 1000  # Converte para segundos
 
 
 # game status
+
 initial_menu = 0
 game = 1
 end_menu = 2
 game_status = initial_menu
 
-# Timer setup for progress bar
-time_limit = 10  # 10 seconds to fill the bar
-start_time = pygame.time.get_ticks() / 1000  # Convert milliseconds to seconds
+# timer setup for progress bar
+
+time_limit = 10
+start_time = pygame.time.get_ticks() / 1000
 
 # game loop
+
 running = True
 while running:
+
     # verify events
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -222,26 +247,31 @@ while running:
                 elif event.key == pygame.K_q:
                     running = False
 
-
     if game_status == initial_menu:
         screen.fill(BLACK)
         text1 = font1.render("TYPING GAME", True, WHITE)
         text2 = font2.render("Press SPACE to start", True, WHITE)
-        screen.blit(text1, (250, 250))
-        screen.blit(text2, (325, 300))
+        screen.blit(text1, (450, 225))
+        screen.blit(text2, (535, 275))
     elif game_status == game:
         screen.fill(BLACK)
-        # Parâmetros da barra de progresso
-        progress_bar_x = 400  # Posição X da barra
-        progress_bar_y = 300 # Posição Y da barra
-        progress_bar_max_width = 300 # Largura total da barra quando completa
-        progress_bar_height = 30  # Altura da barra
+        
+        # parameters for the progress bar
 
-        # Cálculo e desenho da barra de progresso na horizontal
-        elapsed_time = pygame.time.get_ticks() / 1000 - start_time  # Tempo decorrido em segundos
-        progress_width = min(int((elapsed_time / time_limit) * progress_bar_max_width), progress_bar_max_width)  # Largura da barra baseada no tempo
-        pygame.draw.rect(screen, WHITE, (progress_bar_x, progress_bar_y, progress_bar_max_width, progress_bar_height))
-        pygame.draw.rect(screen, GREEN, (progress_bar_x, progress_bar_y, progress_width, progress_bar_height))  # Desenha a barra na tela
+        progress_bar_x = 400
+        progress_bar_y = 300
+        progress_bar_max_width = 300
+        progress_bar_height = 30
+
+        # calculation and drawing of the horizontal progress bar
+
+        elapsed_time = pygame.time.get_ticks() / 1000 - start_time
+        progress_width = min(int((elapsed_time / time_limit) * progress_bar_max_width),
+                             progress_bar_max_width)
+        pygame.draw.rect(screen, WHITE, (progress_bar_x, progress_bar_y, progress_bar_max_width,
+                                         progress_bar_height))
+        pygame.draw.rect(screen, GREEN, (
+            progress_bar_x, progress_bar_y, progress_width, progress_bar_height))
 
         text1 = font2.render("PRESS ESC TO QUIT", True, WHITE)
         screen.blit(text1, (15, 10))
@@ -250,19 +280,19 @@ while running:
         draw_keyboard()
         draw_centered_text_block()
 
-        # Texto para exibir as informações desejadas no canto superior esquerdo
-        lesson_text = font2.render("Lição 1", True, WHITE)
-        screen.blit(lesson_text, (30, 50))  # Posiciona "Lição 1" no topo
+        # text to display the desired information in the top-left corner
 
-        score_text = font2.render("Aproveitamento: 100", True, WHITE)
-        screen.blit(score_text, (30, 70))  # Posiciona "Aproveitamento: 100" logo abaixo
+        lesson_text = font2.render("Lesson 1", True, WHITE)
+        screen.blit(lesson_text, (30, 50))
 
-        correct_text = font2.render("Acertos: 0", True, WHITE)
-        screen.blit(correct_text, (30, 90))  # Posiciona "Acertos: 0" abaixo do aproveitamento
+        score_text = font2.render("Score: 100", True, WHITE)
+        screen.blit(score_text, (30, 70))
 
-        mistakes_text = font2.render("Erros: 0", True, WHITE)
-        screen.blit(mistakes_text, (30, 110))  # Posiciona "Erros: 0" abaixo dos acertos
+        correct_text = font2.render("Correct: 0", True, WHITE)
+        screen.blit(correct_text, (30, 90))
 
+        mistakes_text = font2.render("Mistakes: 0", True, WHITE)
+        screen.blit(mistakes_text, (30, 110))
 
         if current_arrow_pos:
             if current_hand_arrow == "both":

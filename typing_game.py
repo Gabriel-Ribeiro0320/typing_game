@@ -98,36 +98,47 @@ def draw_key(x, y, width, height, text, color=GRAY):
 
 def draw_keyboard():
     keys = [
-        ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
-         'F7', 'F8', 'F9', 'F10', 'F11', 'F12'],
-        ['`', '1', '2', '3', '4', '5', '6', '7',
-         '8', '9', '0', '-', '=', 'Backspace'],
-        ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
-        ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H',
-         'J', 'K', 'L', ';', '\'', 'Enter'],
-        ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
+        ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12','Ins','Del'],
+        ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+        ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '´', ']', '{', '}'],
+        ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç', ']', 'Enter'],
+        ['Shift', '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', ';', '?','/'],
         ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Fn', 'Ctrl']
     ]
 
     key_width = 40
     key_height = 30
-    spacing = 5
+    spacing = 2
 
     y_offset = 360
     for row_index, row in enumerate(keys):
         x_offset = 280
         for key in row:
             if key == 'Backspace':
-                width = key_width * 2
-            elif key == 'Tab' or key == 'CapsLock' or key == 'Enter':
-                width = key_width * 1.5
-            elif key == 'Shift':
-                width = key_width * 2
+                width = key_width * 2.05
+            elif key == 'Tab':
+                width = key_width * 1 
+            elif key == 'CapsLock':
+                width = key_width * 1.75
+            elif key == 'Enter':
+                width = key_width * 2.35
+                height = key_height * 1.5
+            elif key == 'Shift' and row_index == 4 and row.index(key) == 0:
+                width = key_width * 2.05
+            elif key == 'Shift' and row_index == 4 and row.index(key) == len(row) - 1:
+                width = key_width * 2.05
             elif key == ' ':
-                width = key_width * 5
+                width = key_width * 7.3
+            elif key == 'Ctrl':
+                width = key_width * 2.05
             else:
                 width = key_width
-            draw_key(x_offset, y_offset, width, key_height, key)
+
+
+            pygame.draw.rect(screen, (150, 150, 150), (x_offset, y_offset, width, key_height))
+            text_surface = font2.render(key, True, (0, 0, 0)) 
+            text_rect = text_surface.get_rect(center=(x_offset + width / 2, y_offset + key_height / 2))
+            screen.blit(text_surface, text_rect)
             x_offset += width + spacing
         y_offset += key_height + spacing
 
