@@ -312,6 +312,28 @@ while running:
         mistakes_text = font2.render(f"PALAVRAS ERRADAS: {negative_score}", True, WHITE)
         screen.blit(mistakes_text, (30, 90))
 
+        # identify new letter to be typed
+
+        if len(user_input) < len(current_word):
+            next_letter = current_word[len(user_input)]
+            next_letter_key = ord(next_letter.lower())
+
+            # identify the finger that should type the next letter
+
+            finger = key_to_finger.get(next_letter_key)
+            if finger:
+                if next_letter_key == pygame.K_SPACE:
+                    current_arrow_pos = (
+                        arrow_positions_left["left_thumb"], arrow_positions_right["right_thumb"]
+                    )
+                    current_hand_arrow = "both"
+                elif "left" in finger:
+                    current_arrow_pos = arrow_positions_left[finger]
+                    current_hand_arrow = "left"
+                elif "right" in finger:
+                    current_arrow_pos = arrow_positions_right[finger]
+                    current_hand_arrow = "right"
+
         if current_arrow_pos:
             if current_hand_arrow == "both":
                 screen.blit(left_hand_arrow_image, current_arrow_pos[0])
