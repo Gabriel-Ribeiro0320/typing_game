@@ -142,6 +142,7 @@ def draw_keyboard():
             x_offset += width + spacing
         y_offset += key_height + spacing
 
+
 # game status
 
 initial_menu = 0
