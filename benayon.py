@@ -253,6 +253,7 @@ while running:
         screen.blit(text2, (535, 275))
     elif game_status == game:
         screen.fill(BLACK)
+        
         # parameters for the progress bar
 
         progress_bar_x = 400
