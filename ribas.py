@@ -34,6 +34,9 @@ current_arrow_pos = None
 
 score = 0
 negative_score = 0
+button_color = (0, 120, 215)
+button_hover_color = (30, 144, 255)
+button_rect = pygame.Rect(500, 300, 200, 80)
 
 # hands images
 
@@ -277,10 +280,30 @@ while running:
 
     if game_status == initial_menu:
         screen.fill(BLACK)
-        text1 = font1.render("TYPING GAME", True, WHITE)
-        text2 = font2.render("Press SPACE to start", True, WHITE)
+        text1 = font1.render("TIGER TYPING", True, WHITE)
         screen.blit(text1, (450, 225))
-        screen.blit(text2, (535, 275))
+
+        # Detecta a posição do mouse e altera a cor do botão se estiver em cima
+        mouse_pos = pygame.mouse.get_pos()
+        if button_rect.collidepoint(mouse_pos):
+            pygame.draw.rect(screen, button_hover_color, button_rect)
+        else:
+            pygame.draw.rect(screen, button_color, button_rect)
+
+        # Renderiza o texto do botão "Fase 2"
+        button_text = font1.render("Fase 2", True, WHITE)
+        button_text_rect = button_text.get_rect(center=button_rect.center)
+        screen.blit(button_text, button_text_rect)
+
+        # Verifica se o botão foi clicado
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(mouse_pos):
+                    game_status = game
+                    start_time = pygame.time.get_ticks() / 1000
+                    total_play_time = 0
     elif game_status == game:
         screen.fill(BLACK)
 
