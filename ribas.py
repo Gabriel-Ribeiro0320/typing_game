@@ -22,6 +22,7 @@ DARK_GRAY = (50, 50, 50)
 
 # fonts
 
+font_title = pygame.font.Font("assets/gangof3.ttf", 60)
 font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
@@ -282,7 +283,7 @@ while running:
 
     if game_status == initial_menu:
         screen.fill(BLACK)
-        text1 = font1.render("TIGER TYPING", True, WHITE)
+        text1 = font_title.render("TIGER TYPING", True, WHITE)
         screen.blit(text1, (450, 225))
 
         # Detecta a posição do mouse e altera a cor do botão se estiver em cima
