@@ -22,6 +22,9 @@ DARK_GRAY = (50, 50, 50)
 
 # fonts
 
+title_font = pygame.font.Font("assets/gangof3.ttf", 60)
+subtitle_font = pygame.font.Font("assets/gangof3.ttf", 20)
+end_menu_font = pygame.font.Font("assets/gangof3.ttf", 40)
 font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
@@ -33,7 +36,8 @@ current_arrow_pos = None
 # global variables
 
 score = 0
-negative_score = 0
+wrong_words = 0
+pressed_key = None
 
 # hands images
 
@@ -75,12 +79,14 @@ arrow_positions_right = {
 key_to_finger = {
 
     # left hand keys
+
     pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky", pygame.K_1: "left_pinky",
     pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring", pygame.K_2: "left_ring",
     pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle", pygame.K_3: "left_middle",
     pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index", pygame.K_4: "left_index",
     pygame.K_t: "left_index", pygame.K_g: "left_index", pygame.K_b: "left_index", pygame.K_5: "left_index",
     # right hand keys
+
     pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
     pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
     pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
@@ -101,6 +107,11 @@ def load_words_from_file(filename):
     except FileNotFoundError:
         print("Arquivo de palavras não encontrado!")
         return []
+    
+# function to generate a sequence of 5 distinct letters
+def generate_distinct_letters():
+    letters = random.sample("abcdefghijklmnopqrstuvwxyz", 5) 
+    return ''.join(letters)
 
 
 word_list = load_words_from_file('assets/br-sem-acentos.txt')
@@ -160,7 +171,9 @@ def draw_keyboard():
         x_offset = 280
 
         for key in row:
-            # Adjust widths for special keys
+
+            # adjust widths for special keys
+
             if key == 'Backspace':
                 width = key_width * 2.05
             elif key == 'Tab':
@@ -180,10 +193,17 @@ def draw_keyboard():
             else:
                 width = key_width
 
+                # verifying and attributing colors to letters
+
+            if key == pressed_key:
+                key_color = RED
+            else:
+                key_color = (150, 150, 150)
+
             # draw clean key with no border or extra details
 
-            pygame.draw.rect(screen, (150, 150, 150), (x_offset, y_offset, width, key_height))
-            text_surface = font2.render(key, True, (0, 0, 0))  # Black text for contrast
+            pygame.draw.rect(screen, key_color, (x_offset, y_offset, width, key_height))
+            text_surface = font2.render(key, True, BLACK)
             text_rect = text_surface.get_rect(center=(x_offset + width / 2, y_offset + key_height / 2))
             screen.blit(text_surface, text_rect)
 
@@ -199,39 +219,51 @@ def draw_keyboard():
 # game status
 
 initial_menu = 0
-game = 1
-end_menu = 2
+second_menu = 1
+game = 2
+tutorial = 3
+end_menu = 4
 game_status = initial_menu
 
 # timer setup for progress bar
 
 time_limit = 10
 start_time = None
+total_time = 0
+word_count = 0
+average_time = 0
 
 def reset_game():
     global score, user_input, current_word, start_time
     score = 0
     user_input = ""
-    current_word = random.choice(word_list) if word_list else "No words"
+    current_word = generate_distinct_letters()  # Reset current word for tutorial
     start_time = None
 
 
 # game loop
-
 running = True
 while running:
+    screen.fill(BLACK)
 
     # verify events
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
+            pressed_key = pygame.key.name(event.key).upper()
             if game_status == initial_menu:
                 if event.key == pygame.K_SPACE:
+                    game_status = second_menu
+            elif game_status == second_menu:
+                if event.key == pygame.K_d:  # Choose Phase 1
                     game_status = game
                     start_time = pygame.time.get_ticks() / 1000
-            elif game_status == game:
+                elif event.key == pygame.K_t:  # Choose Phase 2 (new phase)
+                    game_status = tutorial
+                    start_time = pygame.time.get_ticks() / 1000
+                    current_word = generate_distinct_letters()  # Generate distinct letters
+            elif game_status == game or game_status == tutorial:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
                 else:
@@ -241,15 +273,23 @@ while running:
                         user_input = user_input[:-1]
                     elif event.key == pygame.K_RETURN:
                         if user_input == current_word:
-                            score += 1
-                            user_input = ""
-                            current_word = random.choice(word_list) if word_list else "No words"  
-                            start_time = pygame.time.get_ticks() / 1000  
-                        else:
-                            negative_score += 1
+                            score += 25
+                            word_count += 1
+                            word_time = pygame.time.get_ticks() / 1000 - start_time
+                            total_time += word_time
+                            average_time = total_time / word_count
                             user_input = ""
                             current_word = random.choice(word_list) if word_list else "No words"
-                            start_time = pygame.time.get_ticks() / 1000  
+                            current_word = generate_distinct_letters()  # Generate distinct letters
+                            start_time = pygame.time.get_ticks() / 1000
+                        else:
+                            score -= 10
+                            wrong_words += 1
+                            user_input = ""
+                            current_word = random.choice(word_list) if word_list else "No words"
+                            current_word = current_word = generate_distinct_letters()  # Generate distinct letters
+                            start_time = pygame.time.get_ticks() / 1000
+
                     finger = key_to_finger.get(event.key)
                     if finger:
                         if event.key == pygame.K_SPACE:
@@ -273,22 +313,28 @@ while running:
 
     if game_status == initial_menu:
         screen.fill(BLACK)
-        text1 = font1.render("TYPING GAME", True, WHITE)
-        text2 = font2.render("Press SPACE to start", True, WHITE)
-        screen.blit(text1, (450, 225))
-        screen.blit(text2, (535, 275))
-    elif game_status == game:
+        text1 = title_font.render("TIGER TYPING", True, WHITE)
+        text2 = subtitle_font.render("Press SPACE to start", True, WHITE)
+        screen.blit(text1, (430, 210))
+        screen.blit(text2, (505, 275))
+    elif game_status == second_menu:
+        screen.fill(BLACK)
+        text1 = title_font.render("ESCOLHA A OPÇÃO", True, WHITE)
+        text2 = subtitle_font.render("Press D para ir ao Desafio", True, WHITE)
+        text3 = subtitle_font.render("Press T para ir ao Tutorial", True, WHITE)
+        screen.blit(text1, (430, 210))
+        screen.blit(text2, (450, 275))
+        screen.blit(text3, (450, 315))
+    elif game_status == game or game_status == tutorial:
         screen.fill(BLACK)
 
         # parameters for the progress bar
-
         progress_bar_x = 445
         progress_bar_y = 300
         progress_bar_max_width = 300
         progress_bar_height = 30
 
         # calculating and drawing the progress bar
-
         if start_time is not None:
             elapsed_time = pygame.time.get_ticks() / 1000 - start_time
             progress_width = min(int((elapsed_time / time_limit) * progress_bar_max_width), progress_bar_max_width)
@@ -296,39 +342,33 @@ while running:
                              (progress_bar_x, progress_bar_y, progress_bar_max_width, progress_bar_height))
             pygame.draw.rect(screen, GREEN, (progress_bar_x, progress_bar_y, progress_width, progress_bar_height))
 
-            # Verifica se o tempo acabou
+            # verify if time is over
             if elapsed_time >= time_limit:
-                negative_score += 1  
-                user_input = ""  
-                current_word = random.choice(word_list) if word_list else "No words"  
-                start_time = pygame.time.get_ticks() / 1000  
+                wrong_words += 1
+                user_input = ""
+                current_word = random.choice(word_list) if word_list else "No words"
+                start_time = pygame.time.get_ticks() / 1000
 
-        text1 = font2.render("PRESS ESC TO QUIT", True, WHITE)
-        screen.blit(text1, (1060, 10))
+        text1 = subtitle_font.render("PRESS ESC TO QUIT", True, WHITE)
+        screen.blit(text1, (1010, 10))
         screen.blit(left_hand_image, left_hand_pos)
         screen.blit(right_hand_image, right_hand_pos)
         draw_keyboard()
         draw_centered_text_block()
 
         # text to display the desired information in the top-left corner
+        correct_answers_score = subtitle_font.render(f"PALAVRAS CORRETAS: {word_count}", True, WHITE)
+        screen.blit(correct_answers_score, (20, 15))
 
-        lesson_text = font2.render("FASE 1", True, WHITE)
-        screen.blit(lesson_text, (15, 10))
-
-        score_text = font2.render(f"PALAVRAS CORRETAS: {score}", True, WHITE)
-        screen.blit(score_text, (30, 70))
-
-        mistakes_text = font2.render(f"PALAVRAS ERRADAS: {negative_score}", True, WHITE)
-        screen.blit(mistakes_text, (30, 90))
+        mistakes_text = subtitle_font.render(f"PALAVRAS ERRADAS: {wrong_words}", True, WHITE)
+        screen.blit(mistakes_text, (20, 35))
 
         # identify new letter to be typed
-
         if len(user_input) < len(current_word):
             next_letter = current_word[len(user_input)]
             next_letter_key = ord(next_letter.lower())
 
             # identify the finger that should type the next letter
-
             finger = key_to_finger.get(next_letter_key)
             if finger:
                 if next_letter_key == pygame.K_SPACE:
@@ -353,10 +393,16 @@ while running:
                 screen.blit(right_hand_arrow_image, current_arrow_pos)
     elif game_status == end_menu:
         screen.fill(BLACK)
-        text1 = font3.render("Press R to restart", True, WHITE)
-        text2 = font3.render("Press Q to quit", True, WHITE)
-        screen.blit(text1, (280, 500))
-        screen.blit(text2, (280, 530))
+        text1 = subtitle_font.render("Press R to restart", True, WHITE)
+        text3 = subtitle_font.render(f"Palavras Corretas: {word_count}", True, WHITE)
+        text4 = subtitle_font.render(f"Palavras Erradas: {wrong_words}", True, WHITE)
+        average_time_text = subtitle_font.render(f"TEMPO MÉDIO: {average_time:.2f}s", True, WHITE)
+        score_end_menu = title_font.render(f"SCORE: {score}", True, WHITE)
+        screen.blit(text1, (500, 550))
+        screen.blit(text3, (315, 300))
+        screen.blit(text4, (650, 300))
+        screen.blit(average_time_text, (500, 360))
+        screen.blit(score_end_menu, (450, 200))
 
     pygame.display.flip()
 
