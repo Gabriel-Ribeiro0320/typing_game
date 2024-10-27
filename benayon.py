@@ -22,6 +22,9 @@ DARK_GRAY = (50, 50, 50)
 
 # fonts
 
+title_font = pygame.font.Font("assets/gangof3.ttf", 60)
+subtitle_font = pygame.font.Font("assets/gangof3.ttf", 20)
+end_menu_font = pygame.font.Font("assets/gangof3.ttf", 40)
 font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
@@ -33,7 +36,8 @@ current_arrow_pos = None
 # global variables
 
 score = 0
-negative_score = 0
+wrong_words = 0
+pressed_key = None
 
 # hands images
 
@@ -160,7 +164,9 @@ def draw_keyboard():
         x_offset = 280
 
         for key in row:
-            # Adjust widths for special keys
+
+            # adjust widths for special keys
+
             if key == 'Backspace':
                 width = key_width * 2.05
             elif key == 'Tab':
@@ -180,10 +186,16 @@ def draw_keyboard():
             else:
                 width = key_width
 
+                # verifying and attributing colors to letters
+            if key == pressed_key:
+                key_color = RED
+            else:
+                key_color = (150, 150, 150)
+
             # draw clean key with no border or extra details
 
-            pygame.draw.rect(screen, (150, 150, 150), (x_offset, y_offset, width, key_height))
-            text_surface = font2.render(key, True, (0, 0, 0))  # Black text for contrast
+            pygame.draw.rect(screen, key_color, (x_offset, y_offset, width, key_height))
+            text_surface = font2.render(key, True, BLACK)
             text_rect = text_surface.get_rect(center=(x_offset + width / 2, y_offset + key_height / 2))
             screen.blit(text_surface, text_rect)
 
@@ -207,6 +219,9 @@ game_status = initial_menu
 
 time_limit = 10
 start_time = None
+total_time = 0
+word_count = 0
+average_time = 0
 
 def reset_game():
     global score, user_input, current_word, start_time
@@ -220,13 +235,14 @@ def reset_game():
 
 running = True
 while running:
-
+    screen.fill(BLACK)
     # verify events
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
+            pressed_key = pygame.key.name(event.key).upper()
             if game_status == initial_menu:
                 if event.key == pygame.K_SPACE:
                     game_status = game
@@ -241,13 +257,25 @@ while running:
                         user_input = user_input[:-1]
                     elif event.key == pygame.K_RETURN:
                         if user_input == current_word:
-                            score += 1
+                            score += 25
+                            word_count += 1  # Incrementa contagem de palavras corretas
+
+                            # Calcula o tempo gasto para a palavra e soma ao tempo total
+                            word_time = pygame.time.get_ticks() / 1000 - start_time
+                            total_time += word_time
+
+                            # Calcula o tempo médio
+                            average_time = total_time / word_count
+
                             user_input = ""
                             current_word = random.choice(word_list) if word_list else "No words"
+                            start_time = pygame.time.get_ticks() / 1000
                         else:
-                            negative_score += 1
+                            score -= 10
+                            wrong_words += 1
                             user_input = ""
                             current_word = random.choice(word_list) if word_list else "No words"
+                            start_time = pygame.time.get_ticks() / 1000
                     finger = key_to_finger.get(event.key)
                     if finger:
                         if event.key == pygame.K_SPACE:
@@ -271,10 +299,10 @@ while running:
 
     if game_status == initial_menu:
         screen.fill(BLACK)
-        text1 = font1.render("TYPING GAME", True, WHITE)
-        text2 = font2.render("Press SPACE to start", True, WHITE)
-        screen.blit(text1, (450, 225))
-        screen.blit(text2, (535, 275))
+        text1 = title_font.render("TIGER TYPING", True, WHITE)
+        text2 = subtitle_font.render("Press SPACE to start", True, WHITE)
+        screen.blit(text1, (430, 210))
+        screen.blit(text2, (505, 275))
     elif game_status == game:
         screen.fill(BLACK)
 
@@ -294,8 +322,16 @@ while running:
                              (progress_bar_x, progress_bar_y, progress_bar_max_width, progress_bar_height))
             pygame.draw.rect(screen, GREEN, (progress_bar_x, progress_bar_y, progress_width, progress_bar_height))
 
-        text1 = font2.render("PRESS ESC TO QUIT", True, WHITE)
-        screen.blit(text1, (1060, 10))
+            # verify if time is over
+
+            if elapsed_time >= time_limit:
+                wrong_words += 1
+                user_input = ""
+                current_word = random.choice(word_list) if word_list else "No words"
+                start_time = pygame.time.get_ticks() / 1000
+
+        text1 = subtitle_font.render("PRESS ESC TO QUIT", True, WHITE)
+        screen.blit(text1, (1010, 10))
         screen.blit(left_hand_image, left_hand_pos)
         screen.blit(right_hand_image, right_hand_pos)
         draw_keyboard()
@@ -303,14 +339,11 @@ while running:
 
         # text to display the desired information in the top-left corner
 
-        lesson_text = font2.render("FASE 1", True, WHITE)
-        screen.blit(lesson_text, (15, 10))
+        correct_answers_score = subtitle_font.render(f"PALAVRAS CORRETAS: {word_count}", True, WHITE)
+        screen.blit(correct_answers_score, (20, 15))
 
-        score_text = font2.render(f"PALAVRAS CORRETAS: {score}", True, WHITE)
-        screen.blit(score_text, (30, 70))
-
-        mistakes_text = font2.render(f"PALAVRAS ERRADAS: {negative_score}", True, WHITE)
-        screen.blit(mistakes_text, (30, 90))
+        mistakes_text = subtitle_font.render(f"PALAVRAS ERRADAS: {wrong_words}", True, WHITE)
+        screen.blit(mistakes_text, (20, 35))
 
         # identify new letter to be typed
 
@@ -344,10 +377,16 @@ while running:
                 screen.blit(right_hand_arrow_image, current_arrow_pos)
     elif game_status == end_menu:
         screen.fill(BLACK)
-        text1 = font3.render("Press R to restart", True, WHITE)
-        text2 = font3.render("Press Q to quit", True, WHITE)
-        screen.blit(text1, (280, 500))
-        screen.blit(text2, (280, 530))
+        text1 = subtitle_font.render("Press R to restart", True, WHITE)
+        text3 = subtitle_font.render(f"Palavras Corretas: {word_count}", True, WHITE)
+        text4 = subtitle_font.render(f"Palavras Erradas: {wrong_words}", True, WHITE)
+        average_time_text = subtitle_font.render(f"TEMPO MÉDIO: {average_time:.2f}s", True, WHITE)
+        score_end_menu = title_font.render(f"SCORE: {score}", True, WHITE)
+        screen.blit(text1, (500, 550))
+        screen.blit(text3, (315, 300))
+        screen.blit(text4, (650, 300))
+        screen.blit(average_time_text, (500, 360))
+        screen.blit(score_end_menu, (450, 200))
 
     pygame.display.flip()
 
