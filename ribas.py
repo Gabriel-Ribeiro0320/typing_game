@@ -36,7 +36,7 @@ score = 0
 negative_score = 0
 button_color = (0, 120, 215)
 button_hover_color = (30, 144, 255)
-button_rect = pygame.Rect(500, 300, 200, 80)
+button_rect_fase2 = pygame.Rect(500, 300, 200, 80)
 
 # hands images
 
@@ -213,34 +213,35 @@ start_time = None
 total_play_time = 0
 
 def reset_game():
-    global score, negative_score, user_input, current_word, start_time, end_time
+    global score, negative_score, user_input, current_word, start_time, total_play_time
     score = 0
     negative_score = 0
     user_input = ""
     current_word = random.choice(word_list) if word_list else "No words"
     start_time = None
-    end_time = None
+    total_play_time = 0
 
 # game loop
 
 running = True
 while running:
-
+    current_time = pygame.time.get_ticks() / 1000
     # verify events
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if game_status == initial_menu:
-                if event.key == pygame.K_SPACE:
+        elif game_status == initial_menu:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if button_rect_fase2.collidepoint(mouse_pos):
                     game_status = game
                     start_time = pygame.time.get_ticks() / 1000
                     total_play_time = 0
-            elif game_status == game:
+        elif game_status == game:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
-                    total_play_time += pygame.time.get_ticks() / 1000 - start_time
                 else:
                     if event.unicode.isalpha():
                         user_input += event.unicode
@@ -271,6 +272,7 @@ while running:
                             current_arrow_pos = arrow_positions_right[finger]
                             current_hand_arrow = "right"
             elif game_status == end_menu:
+                total_play_time += pygame.time.get_ticks() / 1000 - start_time
                 if event.key == pygame.K_r:
                     reset_game()
                     game_status = initial_menu
@@ -285,14 +287,14 @@ while running:
 
         # Detecta a posição do mouse e altera a cor do botão se estiver em cima
         mouse_pos = pygame.mouse.get_pos()
-        if button_rect.collidepoint(mouse_pos):
-            pygame.draw.rect(screen, button_hover_color, button_rect)
+        if button_rect_fase2.collidepoint(mouse_pos):
+            pygame.draw.rect(screen, button_hover_color, button_rect_fase2)
         else:
-            pygame.draw.rect(screen, button_color, button_rect)
+            pygame.draw.rect(screen, button_color, button_rect_fase2)
 
         # Renderiza o texto do botão "Fase 2"
         button_text = font1.render("Fase 2", True, WHITE)
-        button_text_rect = button_text.get_rect(center=button_rect.center)
+        button_text_rect = button_text.get_rect(center=button_rect_fase2.center)
         screen.blit(button_text, button_text_rect)
 
         # Verifica se o botão foi clicado
@@ -300,7 +302,7 @@ while running:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if button_rect.collidepoint(mouse_pos):
+                if button_rect_fase2.collidepoint(mouse_pos):
                     game_status = game
                     start_time = pygame.time.get_ticks() / 1000
                     total_play_time = 0
@@ -318,6 +320,7 @@ while running:
 
         if start_time is not None:
             elapsed_time = pygame.time.get_ticks() / 1000 - start_time
+            total_play_time = current_time - start_time
             progress_width = min(int((elapsed_time / time_limit) * progress_bar_max_width), progress_bar_max_width)
             pygame.draw.rect(screen, WHITE,
                              (progress_bar_x, progress_bar_y, progress_bar_max_width, progress_bar_height))
@@ -382,7 +385,8 @@ while running:
         screen.fill(BLACK)
         text1 = font3.render(f"Press R to restart", True, WHITE)
         text2 = font3.render(f"Press Q to quit", True, WHITE)
-        total_time_text = font3.render(f"Tempo jogado: {(total_play_time * 100):.0f} segundos", True, WHITE)
+        total_time_text = font3.render(f"Tempo jogado: {total_play_time:.2f} segundos", True, WHITE)
+        screen.blit(total_time_text, (280, 350))
         correct_words_text = font3.render(f"Correct Words: {score}", True, WHITE)
         wrong_words_text = font3.render(f"Wrong Words: {negative_score}", True, WHITE)
 
