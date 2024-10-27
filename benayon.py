@@ -79,12 +79,14 @@ arrow_positions_right = {
 key_to_finger = {
 
     # left hand keys
+
     pygame.K_q: "left_pinky", pygame.K_a: "left_pinky", pygame.K_z: "left_pinky", pygame.K_1: "left_pinky",
     pygame.K_w: "left_ring", pygame.K_s: "left_ring", pygame.K_x: "left_ring", pygame.K_2: "left_ring",
     pygame.K_e: "left_middle", pygame.K_d: "left_middle", pygame.K_c: "left_middle", pygame.K_3: "left_middle",
     pygame.K_r: "left_index", pygame.K_f: "left_index", pygame.K_v: "left_index", pygame.K_4: "left_index",
     pygame.K_t: "left_index", pygame.K_g: "left_index", pygame.K_b: "left_index", pygame.K_5: "left_index",
     # right hand keys
+
     pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
     pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
     pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
@@ -187,6 +189,7 @@ def draw_keyboard():
                 width = key_width
 
                 # verifying and attributing colors to letters
+
             if key == pressed_key:
                 key_color = RED
             else:
@@ -236,6 +239,7 @@ def reset_game():
 running = True
 while running:
     screen.fill(BLACK)
+
     # verify events
 
     for event in pygame.event.get():
@@ -258,15 +262,10 @@ while running:
                     elif event.key == pygame.K_RETURN:
                         if user_input == current_word:
                             score += 25
-                            word_count += 1  # Incrementa contagem de palavras corretas
-
-                            # Calcula o tempo gasto para a palavra e soma ao tempo total
+                            word_count += 1
                             word_time = pygame.time.get_ticks() / 1000 - start_time
                             total_time += word_time
-
-                            # Calcula o tempo médio
                             average_time = total_time / word_count
-
                             user_input = ""
                             current_word = random.choice(word_list) if word_list else "No words"
                             start_time = pygame.time.get_ticks() / 1000
