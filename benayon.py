@@ -38,6 +38,10 @@ current_arrow_pos = None
 score = 0
 wrong_words = 0
 pressed_key = None
+background_image = pygame.image.load("assets/background1.jpg")
+background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
+background_image2 = pygame.image.load("assets/background2.jpg")
+background_image2 = pygame.transform.scale(background_image2, (screen_width, screen_height))
 
 # hands images
 
@@ -260,10 +264,14 @@ while running:
                     game_status = second_menu
             elif game_status == second_menu:
                 if event.key == pygame.K_d:  # Choose Phase 1
+                    wrong_words = 0
+                    word_count = 0
                     pressed_key = None
                     game_status = game
                     start_time = pygame.time.get_ticks() / 1000
                 elif event.key == pygame.K_t:  # Choose Phase 2 (new phase)
+                    wrong_words = 0
+                    word_count = 0
                     pressed_key = None
                     game_status = tutorial
                     start_time = pygame.time.get_ticks() / 1000
@@ -320,13 +328,13 @@ while running:
                     running = False
 
     if game_status == initial_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image, (0, 0))
         text1 = title_font.render("TIGER TYPING", True, WHITE)
         text2 = subtitle_font.render("Press SPACE to start", True, WHITE)
         screen.blit(text1, (430, 210))
         screen.blit(text2, (505, 275))
     elif game_status == second_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image, (0, 0))
         text1 = title_font.render("ESCOLHA A OPÇÃO", True, WHITE)
         text2 = subtitle_font.render("Press D para ir ao Desafio", True, WHITE)
         text3 = subtitle_font.render("Press T para ir ao Tutorial", True, WHITE)
@@ -334,7 +342,7 @@ while running:
         screen.blit(text2, (450, 280))
         screen.blit(text3, (450, 310))
     elif game_status == game or game_status == tutorial:
-        screen.fill(BLACK)
+        screen.blit(background_image2, (0, 0))
 
         # parameters for the progress bar
         progress_bar_x = 445
@@ -406,7 +414,7 @@ while running:
             elif current_hand_arrow == "right":
                 screen.blit(right_hand_arrow_image, current_arrow_pos)
     elif game_status == end_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image2, (0, 0))
         text1 = subtitle_font.render("Press R to restart", True, WHITE)
         text3 = subtitle_font.render(f"Palavras Corretas: {word_count}", True, WHITE)
         text4 = subtitle_font.render(f"Palavras Erradas: {wrong_words}", True, WHITE)
