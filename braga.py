@@ -109,6 +109,7 @@ def load_words_from_file(filename):
         return []
     
 # function to generate a sequence of 5 distinct letters
+
 def generate_distinct_letters():
     letters = random.sample("abcdefghijklmnopqrstuvwxyz", 5) 
     return ''.join(letters)
@@ -237,9 +238,8 @@ def reset_game():
     global score, user_input, current_word, start_time
     score = 0
     user_input = ""
-    current_word = generate_distinct_letters()  # Reset current word for tutorial
+    current_word = random.choice(word_list) if word_list else "No words"
     start_time = None
-
 
 # game loop
 running = True
@@ -262,7 +262,7 @@ while running:
                 elif event.key == pygame.K_t:  # Choose Phase 2 (new phase)
                     game_status = tutorial
                     start_time = pygame.time.get_ticks() / 1000
-                    current_word = generate_distinct_letters()  # Generate distinct letters
+                    current_word = generate_distinct_letters()
             elif game_status == game or game_status == tutorial:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
@@ -279,15 +279,19 @@ while running:
                             total_time += word_time
                             average_time = total_time / word_count
                             user_input = ""
-                            current_word = random.choice(word_list) if word_list else "No words"
-                            current_word = generate_distinct_letters()  # Generate distinct letters
+                            if game_status == game:
+                                current_word = random.choice(word_list) if word_list else "No words"
+                            else:
+                                current_word = generate_distinct_letters()
                             start_time = pygame.time.get_ticks() / 1000
                         else:
                             score -= 10
                             wrong_words += 1
                             user_input = ""
-                            current_word = random.choice(word_list) if word_list else "No words"
-                            current_word = current_word = generate_distinct_letters()  # Generate distinct letters
+                            if game_status == game:
+                                current_word = random.choice(word_list) if word_list else "No words"
+                            else:
+                                current_word = generate_distinct_letters()
                             start_time = pygame.time.get_ticks() / 1000
 
                     finger = key_to_finger.get(event.key)
@@ -305,7 +309,6 @@ while running:
                             current_hand_arrow = "right"
             elif game_status == end_menu:
                 if event.key == pygame.K_r:
-                    reset_game()
                     game_status = initial_menu
                     current_arrow_pos = None
                 elif event.key == pygame.K_q:
@@ -344,10 +347,16 @@ while running:
 
             # verify if time is over
             if elapsed_time >= time_limit:
-                wrong_words += 1
-                user_input = ""
-                current_word = random.choice(word_list) if word_list else "No words"
-                start_time = pygame.time.get_ticks() / 1000
+                if game_status ==  game:
+                    wrong_words += 1
+                    user_input = ""
+                    current_word = random.choice(word_list) if word_list else "No words"
+                    start_time = pygame.time.get_ticks() / 1000
+                else:
+                    wrong_words += 1
+                    user_input = ""
+                    current_word = generate_distinct_letters()
+                    start_time = pygame.time.get_ticks() / 1000
 
         text1 = subtitle_font.render("PRESS ESC TO QUIT", True, WHITE)
         screen.blit(text1, (1010, 10))
