@@ -4,6 +4,11 @@ import random
 
 pygame.init()
 
+pygame.mixer.init()
+pygame.mixer.music.load('assets/soundtrack.mp3')
+pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.play(-1)
+
 # screen variables
 
 screen_width = 1200
@@ -38,6 +43,10 @@ current_arrow_pos = None
 score = 0
 wrong_words = 0
 pressed_key = None
+background_image = pygame.image.load("assets/background1.jpg")
+background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
+background_image2 = pygame.image.load("assets/background2.jpg")
+background_image2 = pygame.transform.scale(background_image2, (screen_width, screen_height))
 
 # hands images
 
@@ -107,6 +116,13 @@ def load_words_from_file(filename):
     except FileNotFoundError:
         print("Arquivo de palavras não encontrado!")
         return []
+
+
+# function to generate a sequence of 5 distinct letters
+
+def generate_distinct_letters():
+    letters = random.sample("abcdefghijklmnopqrstuvwxyz", 5)
+    return ''.join(letters)
 
 
 word_list = load_words_from_file('assets/br-sem-acentos.txt')
@@ -228,6 +244,7 @@ total_time = 0
 word_count = 0
 average_time = 0
 
+
 def reset_game():
     global score, user_input, current_word, start_time
     score = 0
@@ -252,11 +269,18 @@ while running:
                     game_status = second_menu
             elif game_status == second_menu:
                 if event.key == pygame.K_d:  # Choose Phase 1
+                    wrong_words = 0
+                    word_count = 0
+                    pressed_key = None
                     game_status = game
                     start_time = pygame.time.get_ticks() / 1000
                 elif event.key == pygame.K_t:  # Choose Phase 2 (new phase)
+                    wrong_words = 0
+                    word_count = 0
+                    pressed_key = None
                     game_status = tutorial
                     start_time = pygame.time.get_ticks() / 1000
+                    current_word = generate_distinct_letters()
             elif game_status == game or game_status == tutorial:
                 if event.key == pygame.K_ESCAPE:
                     game_status = end_menu
@@ -273,14 +297,21 @@ while running:
                             total_time += word_time
                             average_time = total_time / word_count
                             user_input = ""
-                            current_word = random.choice(word_list) if word_list else "No words"
+                            if game_status == game:
+                                current_word = random.choice(word_list) if word_list else "No words"
+                            else:
+                                current_word = generate_distinct_letters()
                             start_time = pygame.time.get_ticks() / 1000
                         else:
                             score -= 10
                             wrong_words += 1
                             user_input = ""
-                            current_word = random.choice(word_list) if word_list else "No words"
+                            if game_status == game:
+                                current_word = random.choice(word_list) if word_list else "No words"
+                            else:
+                                current_word = generate_distinct_letters()
                             start_time = pygame.time.get_ticks() / 1000
+
                     finger = key_to_finger.get(event.key)
                     if finger:
                         if event.key == pygame.K_SPACE:
@@ -296,28 +327,27 @@ while running:
                             current_hand_arrow = "right"
             elif game_status == end_menu:
                 if event.key == pygame.K_r:
-                    reset_game()
                     game_status = initial_menu
                     current_arrow_pos = None
                 elif event.key == pygame.K_q:
                     running = False
 
     if game_status == initial_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image, (0, 0))
         text1 = title_font.render("TIGER TYPING", True, WHITE)
         text2 = subtitle_font.render("Press SPACE to start", True, WHITE)
         screen.blit(text1, (430, 210))
         screen.blit(text2, (505, 275))
     elif game_status == second_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image, (0, 0))
         text1 = title_font.render("ESCOLHA A OPÇÃO", True, WHITE)
         text2 = subtitle_font.render("Press D para ir ao Desafio", True, WHITE)
         text3 = subtitle_font.render("Press T para ir ao Tutorial", True, WHITE)
-        screen.blit(text1, (430, 210))
-        screen.blit(text2, (450, 275))
-        screen.blit(text3, (450, 315))
+        screen.blit(text1, (350, 210))
+        screen.blit(text2, (450, 280))
+        screen.blit(text3, (450, 310))
     elif game_status == game or game_status == tutorial:
-        screen.fill(BLACK)
+        screen.blit(background_image2, (0, 0))
 
         # parameters for the progress bar
         progress_bar_x = 445
@@ -335,10 +365,16 @@ while running:
 
             # verify if time is over
             if elapsed_time >= time_limit:
-                wrong_words += 1
-                user_input = ""
-                current_word = random.choice(word_list) if word_list else "No words"
-                start_time = pygame.time.get_ticks() / 1000
+                if game_status == game:
+                    wrong_words += 1
+                    user_input = ""
+                    current_word = random.choice(word_list) if word_list else "No words"
+                    start_time = pygame.time.get_ticks() / 1000
+                else:
+                    wrong_words += 1
+                    user_input = ""
+                    current_word = generate_distinct_letters()
+                    start_time = pygame.time.get_ticks() / 1000
 
         text1 = subtitle_font.render("PRESS ESC TO QUIT", True, WHITE)
         screen.blit(text1, (1010, 10))
@@ -383,7 +419,7 @@ while running:
             elif current_hand_arrow == "right":
                 screen.blit(right_hand_arrow_image, current_arrow_pos)
     elif game_status == end_menu:
-        screen.fill(BLACK)
+        screen.blit(background_image2, (0, 0))
         text1 = subtitle_font.render("Press R to restart", True, WHITE)
         text3 = subtitle_font.render(f"Palavras Corretas: {word_count}", True, WHITE)
         text4 = subtitle_font.render(f"Palavras Erradas: {wrong_words}", True, WHITE)
