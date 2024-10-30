@@ -98,7 +98,6 @@ key_to_finger = {
 
     pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
     pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
- pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
     pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
     pygame.K_o: "right_ring", pygame.K_l: "right_ring", pygame.K_9: "right_ring",
     pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky", pygame.K_0: "right_pinky",
