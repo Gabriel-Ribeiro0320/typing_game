@@ -98,3 +98,109 @@ key_to_finger = {
 
     pygame.K_u: "right_index", pygame.K_j: "right_index", pygame.K_m: "right_index", pygame.K_6: "left_index",
     pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
+ pygame.K_y: "right_index", pygame.K_h: "right_index", pygame.K_n: "right_index", pygame.K_7: "left_index",
+    pygame.K_i: "right_middle", pygame.K_k: "right_middle", pygame.K_8: "left_middle",
+    pygame.K_o: "right_ring", pygame.K_l: "right_ring", pygame.K_9: "right_ring",
+    pygame.K_p: "right_pinky", pygame.K_SEMICOLON: "right_pinky", pygame.K_0: "right_pinky",
+
+    # thumbs (spacebar)
+
+    pygame.K_SPACE: "left_thumb"
+}
+
+
+def load_words_from_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            words = file.read().splitlines()
+        return words
+    except FileNotFoundError:
+        print("Arquivo de palavras não encontrado!")
+        return []
+
+
+# function to generate a sequence of 5 distinct letters
+
+def generate_distinct_letters():
+    letters = random.sample("abcdefghijklmnopqrstuvwxyz", 5)
+    return ''.join(letters)
+
+
+word_list = load_words_from_file('assets/br-sem-acentos.txt')
+
+current_word = random.choice(word_list) if word_list else "No words"
+user_input = ""
+
+
+# function to draw a key on the screen
+
+def draw_key(x, y, width, height, text, color=GRAY):
+    pygame.draw.rect(screen, color, (x, y, width, height), border_radius=5)
+    pygame.draw.rect(screen, DARK_GRAY, (x, y, width, height),
+                     2, border_radius=5)
+    text_surface = font_key.render(text, True, BLACK)
+    text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
+    screen.blit(text_surface, text_rect)
+
+
+# function to draw letters
+
+def draw_centered_text_block():
+    block_width = 500
+    block_height = 200
+    x_pos = 350
+    y_pos = 50
+
+    pygame.draw.rect(screen, WHITE, (x_pos, y_pos, block_width, block_height), border_radius=10)
+
+    text_surface = font1.render(current_word, True, BLACK)
+    text_rect = text_surface.get_rect(center=(x_pos + block_width // 2, y_pos + block_height // 3))
+    screen.blit(text_surface, text_rect)
+
+    user_input_surface = font1.render(user_input, True, GREEN)
+    user_input_rect = user_input_surface.get_rect(center=(x_pos + block_width // 2, y_pos + 2 * block_height // 3))
+    screen.blit(user_input_surface, user_input_rect)
+
+
+# function to draw the keyboard layout
+
+def draw_keyboard():
+    keys = [
+        ['Esc', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Ins', 'Del'],
+        ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+        ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '´', ']', '{', '}'],
+        ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç', ']', 'Enter'],
+        ['Shift', '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', ';', '?', '/'],
+        ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Fn', 'Ctrl']
+    ]
+
+    key_width = 40
+    key_height = 30
+    spacing = 2
+
+    y_offset = 360
+    for row_index, row in enumerate(keys):
+        x_offset = 280
+
+        for key in row:
+
+            # adjust widths for special keys
+
+            if key == 'Backspace':
+                width = key_width * 2.05
+            elif key == 'Tab':
+                width = key_width * 1
+            elif key == 'CapsLock':
+                width = key_width * 1.75
+            elif key == 'Enter':
+                width = key_width * 2.35
+            elif key == 'Shift' and row_index == 4 and row.index(key) == 0:
+                width = key_width * 2.05
+            elif key == 'Shift' and row_index == 4 and row.index(key) == len(row) - 1:
+                width = key_width * 2.05
+            elif key == ' ':
+                width = key_width * 7.3
+            elif key == 'Ctrl':
+                width = key_width * 2.05
+            else:
+                width = key_width
