@@ -278,6 +278,7 @@ while running:
                 elif event.key == pygame.K_t:  # Choose Phase 2 (new phase)
                     wrong_words = 0
                     word_count = 0
+                    time_limit = 20
                     pressed_key = None
                     game_status = tutorial
                     start_time = pygame.time.get_ticks() / 1000
