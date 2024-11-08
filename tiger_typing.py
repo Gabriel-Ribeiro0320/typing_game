@@ -85,11 +85,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                spin_slots() 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Check if the button is clicked
+            # check if the button is clicked
             mouse_x, mouse_y = event.pos
             if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
-                spin_slots()  # Change the words when button is clicked
+                spin_slots()  
 
     # draw the background image
 
