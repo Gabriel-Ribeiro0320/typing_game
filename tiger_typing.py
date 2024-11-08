@@ -21,6 +21,7 @@ background_image = pygame.transform.scale(background_image, (screen_width, scree
 
 black = (0, 0, 0)
 white = (255, 255, 255)
+green = (0, 255, 0)
 
 # load words from "br-sem-acento.txt" file
 
@@ -43,6 +44,10 @@ current_slots = [0, 0, 0]
 
 font = pygame.font.Font(None, 30)
 
+# button settings
+button_width, button_height = 65,75 
+button_x = (screen_width - button_width) // 1.965  
+button_y = screen_height - button_height - 15 
 
 # function to draw the "symbols" of the slot machine
 
@@ -67,6 +72,11 @@ def spin_slots():
     for i in range(3):
         slot_stopped[i] = False
 
+# function to draw the button
+
+def draw_button():
+    pygame.draw.circle(screen, green, (button_x + button_width // 2, button_y + button_height // 2), button_width // 2)
+
 
 # main game loop
 
@@ -75,9 +85,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                spin_slots()  # Starts spinning when the spacebar is pressed
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Check if the button is clicked
+            mouse_x, mouse_y = event.pos
+            if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
+                spin_slots()  # Change the words when button is clicked
 
     # draw the background image
 
