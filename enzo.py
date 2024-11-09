@@ -18,6 +18,8 @@ background_image = pygame.transform.scale(background_image, (screen_width, scree
 black = (0, 0, 0)
 white = (255, 255, 255)
 green = (0, 255, 0)
+red = (255, 0, 0)
+orange = (255, 165, 0)
 
 # load words from file
 with open("assets/br-sem-acentos.txt", "r") as file:
@@ -57,6 +59,16 @@ button_width, button_height = 65, 75
 button_x = (screen_width - button_width) // 1.965
 button_y = screen_height - button_height - 15
 
+# function to determine the color of each suit symbol
+def get_suit_color(suit):
+    if suit in ['a', 'b']:
+        return black
+    elif suit in ['c', 'd']:
+        return red
+    elif suit in ['e', 'f']:
+        return orange
+    return white  # Default color
+
 # function to draw the "symbols" of the slot machine
 def draw_slot_machine():
     # Draw words
@@ -76,7 +88,8 @@ def draw_slot_machine():
     # Draw suits independently
     for i, pos in enumerate(suit_grid):
         suit_text = current_suits[i]
-        suit_surface = suit_font.render(suit_text, True, white)
+        suit_color = get_suit_color(suit_text)  # Determine color based on suit
+        suit_surface = suit_font.render(suit_text, True, suit_color)
         suit_rect = suit_surface.get_rect(center=(pos[0], pos[1]))
         screen.blit(suit_surface, suit_rect)
 
