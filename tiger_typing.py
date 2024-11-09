@@ -8,7 +8,7 @@ pygame.init()
 
 # set screen dimensions
 
-screen_width, screen_height = 328, 589
+screen_width, screen_height = 492, 883
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Slot Machine - Fortune Tiger")
 
