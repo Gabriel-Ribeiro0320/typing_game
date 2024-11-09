@@ -46,6 +46,9 @@ suit_grid = [
     (50, 420), (200, 420), (350, 420)    # Bottom row
 ]
 
+# Position for displaying suits_odd value (adjustable)
+suits_odd_position = (100, 800)  # Default position at the bottom of the screen
+
 # Initialize slots to store current symbols displayed in the 3x3 grid
 current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 random words at start
 current_suits = random.choices(suits, k=9)  # Pick 9 random suits at start
@@ -53,11 +56,15 @@ current_suits = random.choices(suits, k=9)  # Pick 9 random suits at start
 # font settings
 font = pygame.font.Font(None, 30)
 suit_font = pygame.font.Font(None, 20)  # Smaller font for suits
+suits_odd_font = pygame.font.Font(None, 40)  # Font for displaying suits_odd
 
 # button settings
 button_width, button_height = 65, 75
 button_x = (screen_width - button_width) // 1.965
 button_y = screen_height - button_height - 15
+
+# Variable to store suits_odd value
+suits_odd = 1  # Default value if no condition is met
 
 # function to determine the color of each suit symbol
 def get_suit_color(suit):
@@ -68,6 +75,40 @@ def get_suit_color(suit):
     elif suit in ['e', 'f']:
         return orange
     return white  # Default color
+
+# function to check conditions for the middle row suits
+def check_middle_row():
+    global suits_odd
+    middle_row_suits = current_suits[3:6]  # Suits in the middle row
+
+    # Count occurrences of each suit in the middle row
+    count_a = middle_row_suits.count('a')
+    count_b = middle_row_suits.count('b')
+    count_c = middle_row_suits.count('c')
+    count_d = middle_row_suits.count('d')
+    count_e = middle_row_suits.count('e')
+    count_f = middle_row_suits.count('f')
+
+    if count_a == 3:
+        suits_odd = 4
+    elif count_b == 3:
+        suits_odd = 5
+    elif count_c == 3:
+        suits_odd = 7
+    elif count_d == 3:
+        suits_odd = 8
+    elif count_e == 3:
+        suits_odd = 11
+    elif count_f == 3:
+        suits_odd = 15
+    elif count_a + count_b == 3:
+        suits_odd = 3
+    elif count_c + count_d == 3:
+        suits_odd = 6
+    elif count_e + count_f == 3:
+        suits_odd = 10
+    else:
+        suits_odd = 1  # Default value if no specific condition is met
 
 # function to draw the "symbols" of the slot machine
 def draw_slot_machine():
@@ -93,11 +134,18 @@ def draw_slot_machine():
         suit_rect = suit_surface.get_rect(center=(pos[0], pos[1]))
         screen.blit(suit_surface, suit_rect)
 
+# function to draw the value of suits_odd at a specified position
+def draw_suits_odd():
+    suits_odd_text = f"suits_odd: {suits_odd}"
+    suits_odd_surface = suits_odd_font.render(suits_odd_text, True, white)
+    screen.blit(suits_odd_surface, suits_odd_position)
+
 # function to start spinning and assign random suits and words to each slot
 def spin_slots():
     global current_slots, current_suits
     current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 unique random words
     current_suits = random.choices(suits, k=9)  # Pick 9 random suits
+    check_middle_row()  # Check middle row conditions after spin
 
 # function to draw the button
 def draw_button():
@@ -126,6 +174,9 @@ while running:
 
     # draw the button
     draw_button()
+
+    # draw the suits_odd value
+    draw_suits_odd()
 
     # update the screen
     pygame.display.flip()
