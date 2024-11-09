@@ -23,23 +23,34 @@ green = (0, 255, 0)
 with open("assets/br-sem-acentos.txt", "r") as file:
     symbols = [line.strip() for line in file if line.strip()]
 
+# define suit symbols (naipes)
+suits = ['a', 'b', 'c', 'd', 'e', 'f']
+
 # slot machine settings
 slot_width = 100  # Width of each slot
 slot_height = 50  # Height of each slot
 
-# Adjusted positions for a 3x3 grid with more spacing
+# Adjusted positions for words in a 3x3 grid with more spacing
 slot_grid = [
     (50, 250), (200, 250), (350, 250),   # Top row
     (50, 350), (200, 350), (350, 350),   # Middle row
     (50, 450), (200, 450), (350, 450)    # Bottom row
 ]
 
-slot_speed = [10, 15, 20]
-slot_stopped = [False] * 9  # 9 slots now
-current_slots = random.sample(range(len(symbols)), 9)  # 9 random symbols at start
+# Independent positions for suits (naipes) in a 3x3 grid with custom coordinates
+suit_grid = [
+    (50, 220), (200, 220), (350, 220),   # Top row
+    (50, 320), (200, 320), (350, 320),   # Middle row
+    (50, 420), (200, 420), (350, 420)    # Bottom row
+]
+
+# Initialize slots to store current symbols displayed in the 3x3 grid
+current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 random words at start
+current_suits = random.choices(suits, k=9)  # Pick 9 random suits at start
 
 # font settings
 font = pygame.font.Font(None, 30)
+suit_font = pygame.font.Font(None, 20)  # Smaller font for suits
 
 # button settings
 button_width, button_height = 65, 75
@@ -48,23 +59,32 @@ button_y = screen_height - button_height - 15
 
 # function to draw the "symbols" of the slot machine
 def draw_slot_machine():
+    # Draw words
     for i, pos in enumerate(slot_grid):
+        # Draw the word (symbol) in the center of the slot
         symbol_text = symbols[current_slots[i]]
         text_surface = font.render(symbol_text, True, white)
         text_rect = text_surface.get_rect(center=(pos[0] + slot_width // 2, pos[1] + slot_height // 2))
 
-        # Draw a rectangle for each slot and center the text inside it
+        # Draw a rectangle for each slot
         slot_rect = pygame.Rect(pos[0], pos[1], slot_width, slot_height)
         pygame.draw.rect(screen, white, slot_rect, 4)  # Border thickness set to 4
+
+        # Blit the word inside the rectangle
         screen.blit(text_surface, text_rect)
 
-# function to start spinning and shuffle the symbols
-def spin_slots():
-    global current_slots
-    current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 unique random symbols
+    # Draw suits independently
+    for i, pos in enumerate(suit_grid):
+        suit_text = current_suits[i]
+        suit_surface = suit_font.render(suit_text, True, white)
+        suit_rect = suit_surface.get_rect(center=(pos[0], pos[1]))
+        screen.blit(suit_surface, suit_rect)
 
-    for i in range(9):  # 9 slots in total
-        slot_stopped[i] = False
+# function to start spinning and assign random suits and words to each slot
+def spin_slots():
+    global current_slots, current_suits
+    current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 unique random words
+    current_suits = random.choices(suits, k=9)  # Pick 9 random suits
 
 # function to draw the button
 def draw_button():
