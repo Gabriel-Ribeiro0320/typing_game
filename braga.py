@@ -76,7 +76,26 @@ def highlight_random_middle_word():
     global highlighted_word_index
     highlighted_word_index = random.choice([3, 4, 5])
 
+# variable to store the word entered by the user
+user_input = ""
 
+# function to draw text box and show user input
+def draw_input_box():
+    input_box_rect = pygame.Rect(150, 630, 300, 40)
+    input_text_surface = font.render(user_input, True, white)
+    screen.blit(input_text_surface, (input_box_rect.x + 5, input_box_rect.y + 5))
+
+# variable to store whether user input is correct
+is_input_correct = False
+
+# function to check if the word entered matches the word drawn
+def check_user_input():
+    if highlighted_word_index is not None:
+        sorted_word = symbols[current_slots[highlighted_word_index]]
+        if user_input == sorted_word:
+            print("Acertou a palavra sorteada!")
+        else:
+            print("A palavra digitada está incorreta.")
 
 # function to determine the color of each suit symbol
 def get_suit_color(suit):
@@ -184,7 +203,7 @@ def spin_slots():
     current_suits = random.choices(suits, k=9)  # Pick 9 random suits
     check_middle_row()  # Check middle row conditions for suits
     check_middle_row_sequence_and_initials()  # Check word conditions for initials and sequence
-    highlight_random_middle_word()  # Sorteia e destaca uma palavra aleatória da linha do meio
+    highlight_random_middle_word()  # draws and highlights a random word from the middle row
 # function to draw the button
 def draw_button():
     pygame.draw.circle(screen, green, (button_x + button_width // 2, button_y + button_height // 2), button_width // 2)
@@ -198,11 +217,14 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 spin_slots()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # check if the button is clicked
-            mouse_x, mouse_y = event.pos
-            if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
-                spin_slots()
+                user_input = ""  
+            elif event.key == pygame.K_BACKSPACE:
+                user_input = user_input[:-1]
+            elif event.key == pygame.K_RETURN:
+                check_user_input()
+            else:
+                if event.unicode.isalnum(): 
+                    user_input += event.unicode
 
     # draw the background image
     screen.blit(background_image, (0, 0))
@@ -212,6 +234,8 @@ while running:
 
     # draw the suits_odd and word_bonus values
     draw_suits_odd_and_word_bonus()
+
+    draw_input_box()  # draw text box with user input
 
     # update the screen
     pygame.display.flip()
