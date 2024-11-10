@@ -35,6 +35,15 @@ with open("assets/br-sem-acentos.txt", "r") as file:
 # define suit symbols (naipes)
 suits = ['a', 'b', 'c', 'd', 'e', 'f']
 
+fruits_images = {
+    'a': pygame.image.load("assets/strawberry.png"),
+    'b': pygame.image.load("assets/cherry.png"),
+    'c': pygame.image.load("assets/banana.png"),
+    'd': pygame.image.load("assets/apple.png"),
+    'e': pygame.image.load("assets/lemon.png"),
+    'f': pygame.image.load("assets/orange.png"),
+}
+
 # slot machine settings
 slot_width = 100  # Width of each slot
 slot_height = 50  # Height of each slot
@@ -167,18 +176,26 @@ def check_middle_row_sequence_and_initials():
 
 # function to draw the "symbols" of the slot machine
 def draw_slot_machine():
-    # Draw words
     for i, pos in enumerate(slot_grid):
-        # select the highlight color if the index matches the one drawn
         color = green if i == highlighted_word_index else white
-
-        # Draw the word (symbol) in the center of the slot
         symbol_text = symbols[current_slots[i]]
         text_surface = font.render(symbol_text, True, color)
         text_rect = text_surface.get_rect(center=(pos[0] + slot_width // 2, pos[1] + slot_height // 2))
-
-        # Blit the word inside the rectangle
         screen.blit(text_surface, text_rect)
+
+
+    for i, pos in enumerate(suit_grid):
+        fruit_key = current_suits[i]
+        fruit_image = fruits_images[fruit_key]
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho se necessário
+        screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
+
+
+    for i, pos in enumerate(suit_grid):
+        fruit_key = current_suits[i]
+        fruit_image = fruits_images[fruit_key]
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho conforme necessário
+        screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
 
     # Draw suits independently
     for i, pos in enumerate(suit_grid):
