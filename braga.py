@@ -24,10 +24,10 @@ orange = (255, 165, 0)
 
 # load words from file
 with open("assets/br-sem-acentos.txt", "r") as file:
-    symbols = [line.strip() for line in file if line.strip()]
+    symbols = [line.strip() for line in file if line.strip() and len(line.strip()) <= 8]
 
 # define suit symbols (naipes)
-suits = ['a', 'b', 'c', 'd', 'e', 'f']
+suits = ['a', 'b', 'c', 'd', 'e', 'f'] 
 
 # slot machine settings
 slot_width = 100  # Width of each slot
@@ -199,6 +199,7 @@ def draw_suits_odd_and_word_bonus():
 # function to start spinning and assign random suits and words to each slot
 def spin_slots():
     global current_slots, current_suits
+
     current_slots = random.choices(range(len(symbols)), k=9)  # Pick 9 random words
     current_suits = random.choices(suits, k=9)  # Pick 9 random suits
     check_middle_row()  # Check middle row conditions for suits
