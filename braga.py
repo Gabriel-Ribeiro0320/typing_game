@@ -35,16 +35,16 @@ slot_height = 50  # Height of each slot
 
 # Adjusted positions for words in a 3x3 grid with more spacing
 slot_grid = [
-    (50, 250), (200, 250), (350, 250),   # Top row
-    (50, 350), (200, 350), (350, 350),   # Middle row
-    (50, 450), (200, 450), (350, 450)    # Bottom row
+    (47, 230), (197, 230), (343, 230),   # Top row
+    (47, 370), (197, 370), (343, 370),   # Middle row
+    (47, 510), (197, 510), (343, 510)    # Bottom row
 ]
 
 # Independent positions for suits (naipes) in a 3x3 grid with custom coordinates
 suit_grid = [
-    (50, 220), (200, 220), (350, 220),   # Top row
-    (50, 320), (200, 320), (350, 320),   # Middle row
-    (50, 420), (200, 420), (350, 420)    # Bottom row
+    (147, 210), (297, 210), (443, 210),   # Top row
+    (147, 350), (297, 350), (443, 350),   # Middle row
+    (147, 490), (297, 490), (443, 490)    # Bottom row
 ]
 
 # Position for displaying suits_odd value (adjustable)
@@ -102,9 +102,9 @@ def get_suit_color(suit):
     if suit in ['a', 'b']:
         return black
     elif suit in ['c', 'd']:
-        return red
+        return black
     elif suit in ['e', 'f']:
-        return orange
+        return black
     return white  # Default color
 
 # function to check conditions for the middle row suits
@@ -170,10 +170,6 @@ def draw_slot_machine():
         symbol_text = symbols[current_slots[i]]
         text_surface = font.render(symbol_text, True, color)
         text_rect = text_surface.get_rect(center=(pos[0] + slot_width // 2, pos[1] + slot_height // 2))
-
-        # Draw a rectangle for each slot
-        slot_rect = pygame.Rect(pos[0], pos[1], slot_width, slot_height)
-        pygame.draw.rect(screen, white, slot_rect, 4)  # Border thickness set to 4
 
         # Blit the word inside the rectangle
         screen.blit(text_surface, text_rect)
