@@ -62,15 +62,13 @@ suit_grid = [
     (147, 490), (297, 490), (443, 490)    # Bottom row
 ]
 
-# Position for displaying suits_odd value (adjustable)
-suits_odd_position = (100, 800)  # Default position at the bottom of the screen
-
 # Initialize slots to store current symbols displayed in the 3x3 grid
 current_slots = random.sample(range(len(symbols)), 9)  # Pick 9 random words at start
 current_suits = random.choices(suits, k=9)  # Pick 9 random suits at start
 
 # font settings
-font = pygame.font.Font(None, 30)
+
+china_font = pygame.font.Font("assets/gangof3.ttf", 20)
 suit_font = pygame.font.Font(None, 20)  # Smaller font for suits
 suits_odd_font = pygame.font.Font(None, 40)  # Font for displaying suits_odd
 
@@ -86,9 +84,6 @@ word_bonus = 1 # Bonus value for word conditions
 # variable to store the index of the selected element
 highlighted_word_index = None
 
-# Initialize score variable
-score = 0  # Starting score
-
 # function to randomly choose an index from the middle row for the word
 def highlight_random_middle_word():
     global highlighted_word_index
@@ -98,10 +93,13 @@ def highlight_random_middle_word():
 user_input = ""
 can_spin = True
 
+# variables
+total_score = 0
+
 # function to draw text box and show user input
 def draw_input_box():
-    input_box_rect = pygame.Rect(150, 630, 300, 40)
-    input_text_surface = font.render(user_input, True, white)
+    input_box_rect = pygame.Rect(200, 625, 300, 40)
+    input_text_surface = china_font.render(user_input, True, white)
     screen.blit(input_text_surface, (input_box_rect.x + 5, input_box_rect.y + 5))
 
 # variable to store whether user input is correct
@@ -109,12 +107,12 @@ is_input_correct = False
 
 # function to check if the word entered matches the word drawn
 def check_user_input():
-    global can_spin, score
+    global can_spin, user_input
     if highlighted_word_index is not None:
         sorted_word = symbols[current_slots[highlighted_word_index]]
         if user_input == sorted_word:
             can_spin = True
-            score += 10  # Increase score by 10 for each correct input
+            user_input = ""
         else:
             can_spin = False
 
@@ -152,103 +150,123 @@ def check_middle_row():
     else:
         suits_odd = 1  # Default value if no specific condition is met
 
-# function to check conditions for word initials and alphabetical sequence in the middle row
+
+# Função para checar sequência alfabética e iniciais na linha do meio
 def check_middle_row_sequence_and_initials():
     global word_bonus
-    word_bonus = 0  # Reset bonus
+    word_bonus = 1  # Reset bonus
 
-    # Get the words in the middle row based on current slots
+    # Obtém as palavras na linha do meio com base nos slots atuais
     middle_row_words = [symbols[current_slots[i]] for i in range(3, 6)]
 
-    # Check if all words start with the same initial
+    # Verifica se todas as palavras começam com a mesma letra
     initials = [word[0] for word in middle_row_words]
     if initials.count(initials[0]) == 3:
         word_bonus += 50
 
-    # Check for alphabetical sequence
-    initial_indices = [string.ascii_lowercase.index(initial) for initial in initials]
-    if sorted(initial_indices) == list(range(min(initial_indices), max(initial_indices) + 1)):
+    # Verifica se as iniciais formam uma sequência alfabética
+    initial_indices = []
+    for initial in initials:
+        if initial in string.ascii_lowercase:  # Certifique-se de que a inicial está em letras minúsculas
+            initial_indices.append(string.ascii_lowercase.index(initial))
+
+    # Checa se as iniciais estão em ordem sequencial, caso todas sejam letras minúsculas
+    if len(initial_indices) == 3 and sorted(initial_indices) == list(
+            range(min(initial_indices), max(initial_indices) + 1)):
         word_bonus += 50
+
 
 # function to draw the "symbols" of the slot machine
 def draw_slot_machine():
     for i, pos in enumerate(slot_grid):
         color = green if i == highlighted_word_index else white
         symbol_text = symbols[current_slots[i]]
-        text_surface = font.render(symbol_text, True, color)
+        text_surface = china_font.render(symbol_text, True, color)
         text_rect = text_surface.get_rect(center=(pos[0] + slot_width // 2, pos[1] + slot_height // 2))
         screen.blit(text_surface, text_rect)
+
 
     for i, pos in enumerate(suit_grid):
         fruit_key = current_suits[i]
         fruit_image = fruits_images[fruit_key]
-        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Adjust size if necessary
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho se necessário
         screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
 
-# function to draw the value of suits_odd and word_bonus at a specified position
-def draw_suits_odd_and_word_bonus():
-    suits_odd_text = f"suits_odd: {suits_odd}"
-    suits_odd_surface = suits_odd_font.render(suits_odd_text, True, white)
-    screen.blit(suits_odd_surface, suits_odd_position)
 
-    word_bonus_text = f"word_bonus: {word_bonus}"
-    word_bonus_surface = suits_odd_font.render(word_bonus_text, True, white)
-    screen.blit(word_bonus_surface, (suits_odd_position[0], suits_odd_position[1] + 40))
+    for i, pos in enumerate(suit_grid):
+        fruit_key = current_suits[i]
+        fruit_image = fruits_images[fruit_key]
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho conforme necessário
+        screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
+
+# function to draw the odd on the game screen
+def draw_odd():
+    odd_text = f"ODD: {suits_odd * word_bonus}"
+    odd_surface = china_font.render(odd_text, True, white)
+    screen.blit(odd_surface, (50, 707))  # Display score in the top-left corner
 
 # function to draw the score on the game screen
 def draw_score():
-    score_text = f"Score: {score}"
-    score_surface = font.render(score_text, True, white)
-    screen.blit(score_surface, (10, 10))  # Display score in the top-left corner
+    score_text = f"SCORE: {100 * (suits_odd * word_bonus)}"
+    score_surface = china_font.render(score_text, True, white)
+    screen.blit(score_surface, (205, 707))  # Display score in the top-left corner
 
-# main game loop
+# function to draw the score on the game screen
+def draw_total_score():
+    total_score_text = f"TOTAL: {total_score}"
+    total_score_surface = china_font.render(total_score_text, True, white)
+    screen.blit(total_score_surface, (370, 707))  # Display score in the top-left corner
+
+# function to start spinning and assign random suits and words to each slot
+def spin_slots():
+    global current_slots, current_suits, total_score
+
+    roulette_sound.play()
+
+    current_slots = random.choices(range(len(symbols)), k=9)  # Pick 9 random words
+    current_suits = random.choices(suits, k=9)  # Pick 9 random suits
+    check_middle_row()  # Check middle row conditions for suits
+    check_middle_row_sequence_and_initials()  # Check word conditions for initials and sequence
+    current_score = 100 * (suits_odd * word_bonus)
+    total_score += current_score
+    highlight_random_middle_word()  # draws and highlights a random word from the middle row
+
 highlight_random_middle_word()
 
-while True:
+# main game loop
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN and can_spin:
-                # Update the highlighted word
-                highlight_random_middle_word()
-
-                # Play sound effect and start spinning if user input is correct
-                roulette_sound.play()
-
-                # Choose new random slots and suits for the grid
-                current_slots = random.sample(range(len(symbols)), 9)
-                current_suits = random.choices(suits, k=9)
-
-                # Check conditions in the middle row after spinning
-                check_middle_row()
-                check_middle_row_sequence_and_initials()
-
-                # Reset user input
+            if event.key == pygame.K_SPACE and can_spin:
+                spin_slots()
                 user_input = ""
+                can_spin = False
             elif event.key == pygame.K_BACKSPACE:
                 user_input = user_input[:-1]
-            elif event.unicode.isalpha():
-                user_input += event.unicode
+            elif event.key == pygame.K_RETURN:
+                check_user_input()
+            else:
+                if event.unicode.isalnum():
+                    user_input += event.unicode
 
-    # check user input against the highlighted word
-    check_user_input()
-
-    # fill the screen with the background image
+    # draw the background image
     screen.blit(background_image, (0, 0))
 
-    # draw slot machine symbols
+    # draw the slot machine with 9 symbols
     draw_slot_machine()
 
-    # draw the value of suits_odd and word_bonus
-    draw_suits_odd_and_word_bonus()
+    draw_input_box()  # draw text box with user input
 
-    # draw input box and user input
-    draw_input_box()
-
-    # draw score on the screen
+    draw_odd()
     draw_score()
+    draw_total_score()
 
-    # update the display
+    # update the screen
     pygame.display.flip()
+
+# quit Pygame
+pygame.quit()
+sys.exit()
