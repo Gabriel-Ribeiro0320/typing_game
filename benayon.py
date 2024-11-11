@@ -111,10 +111,12 @@ def check_user_input():
     if highlighted_word_index is not None:
         sorted_word = symbols[current_slots[highlighted_word_index]]
         if user_input == sorted_word:
-            can_spin = True
-            user_input = ""
+            spin_slots()  # Gira os slots automaticamente quando a palavra está correta
+            user_input = ""  # Limpa a entrada do usuário
+            can_spin = False  # Bloqueia o giro até o próximo acerto
         else:
             can_spin = False
+
 
 # function to check conditions for the middle row suits
 def check_middle_row():
