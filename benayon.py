@@ -3,7 +3,7 @@ import sys
 import random
 import string
 
-# initialize Pygame
+# initialize pygame
 pygame.init()
 pygame.mixer.init()
 
@@ -32,7 +32,7 @@ orange = (255, 165, 0)
 with open("assets/br-sem-acentos.txt", "r") as file:
     symbols = [line.strip() for line in file if line.strip() and len(line.strip()) <= 8]
 
-# define suit symbols (naipes)
+# define suit symbols
 suits = ['a', 'b', 'c', 'd', 'e', 'f']
 
 fruits_images = {
@@ -55,7 +55,7 @@ slot_grid = [
     (47, 510), (197, 510), (343, 510)    # Bottom row
 ]
 
-# Independent positions for suits (naipes) in a 3x3 grid with custom coordinates
+# Independent positions for suits in a 3x3 grid with custom coordinates
 suit_grid = [
     (147, 210), (297, 210), (443, 210),   # Top row
     (147, 350), (297, 350), (443, 350),   # Middle row
@@ -111,9 +111,9 @@ def check_user_input():
     if highlighted_word_index is not None:
         sorted_word = symbols[current_slots[highlighted_word_index]]
         if user_input == sorted_word:
-            spin_slots()  # Gira os slots automaticamente quando a palavra está correta
-            user_input = ""  # Limpa a entrada do usuário
-            can_spin = False  # Bloqueia o giro até o próximo acerto
+            spin_slots()
+            user_input = ""
+            can_spin = False
         else:
             can_spin = False
 
@@ -153,26 +153,21 @@ def check_middle_row():
         suits_odd = 1  # Default value if no specific condition is met
 
 
-# Função para checar sequência alfabética e iniciais na linha do meio
 def check_middle_row_sequence_and_initials():
     global word_bonus
     word_bonus = 1  # Reset bonus
 
-    # Obtém as palavras na linha do meio com base nos slots atuais
     middle_row_words = [symbols[current_slots[i]] for i in range(3, 6)]
 
-    # Verifica se todas as palavras começam com a mesma letra
     initials = [word[0] for word in middle_row_words]
     if initials.count(initials[0]) == 3:
         word_bonus += 50
 
-    # Verifica se as iniciais formam uma sequência alfabética
     initial_indices = []
     for initial in initials:
-        if initial in string.ascii_lowercase:  # Certifique-se de que a inicial está em letras minúsculas
+        if initial in string.ascii_lowercase:
             initial_indices.append(string.ascii_lowercase.index(initial))
 
-    # Checa se as iniciais estão em ordem sequencial, caso todas sejam letras minúsculas
     if len(initial_indices) == 3 and sorted(initial_indices) == list(
             range(min(initial_indices), max(initial_indices) + 1)):
         word_bonus += 50
@@ -191,14 +186,14 @@ def draw_slot_machine():
     for i, pos in enumerate(suit_grid):
         fruit_key = current_suits[i]
         fruit_image = fruits_images[fruit_key]
-        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho se necessário
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))
         screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
 
 
     for i, pos in enumerate(suit_grid):
         fruit_key = current_suits[i]
         fruit_image = fruits_images[fruit_key]
-        fruit_image = pygame.transform.scale(fruit_image, (30, 30))  # Ajuste o tamanho conforme necessário
+        fruit_image = pygame.transform.scale(fruit_image, (30, 30))
         screen.blit(fruit_image, fruit_image.get_rect(center=(pos[0], pos[1])))
 
 # function to draw the odd on the game screen
