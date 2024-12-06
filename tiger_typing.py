@@ -109,13 +109,14 @@ is_input_correct = False
 
 # function to check if the word entered matches the word drawn
 def check_user_input():
-    global can_spin, user_input
+    global can_spin, user_input, highlighted_word_index
     if highlighted_word_index is not None:
-        sorted_word = symbols[current_slots[highlighted_word_index]]
-        if user_input == sorted_word:
+        correct_word = symbols[current_slots[highlighted_word_index]]
+        if user_input == correct_word:
             spin_slots()
+            highlight_random_middle_word()
             user_input = ""
-            can_spin = False
+            can_spin = True
         else:
             can_spin = False
 
