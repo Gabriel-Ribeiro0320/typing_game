@@ -89,6 +89,7 @@ def highlight_random_middle_word():
     global highlighted_word_index
     highlighted_word_index = random.choice([3, 4, 5])
 
+
 # variable to store the word entered by the user
 user_input = ""
 can_spin = True
@@ -101,6 +102,7 @@ def draw_input_box():
     input_box_rect = pygame.Rect(200, 625, 300, 40)
     input_text_surface = china_font.render(user_input, True, white)
     screen.blit(input_text_surface, (input_box_rect.x + 5, input_box_rect.y + 5))
+
 
 # variable to store whether user input is correct
 is_input_correct = False

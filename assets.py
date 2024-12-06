@@ -1,9 +1,14 @@
 import pygame
 
 class Assets:
-    def __init__(self):
-        # Carregar todos os assets aqui
+    def __init__(self, screen_width, screen_height):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self.background_image = self.load_background_image()
+
+    def load_background_image(self):
+        background_image = pygame.image.load("assets/tigrinho.png")
+        return pygame.transform.scale(background_image, (self.screen_width, self.screen_height))
 
     @staticmethod
     def load_symbols():
@@ -20,7 +25,3 @@ class Assets:
             'e': pygame.image.load("assets/lemon.png"),
             'f': pygame.image.load("assets/orange.png"),
         }
-
-    @staticmethod
-    def load_background_image():
-        return pygame.image.load("assets/tigrinho.png")

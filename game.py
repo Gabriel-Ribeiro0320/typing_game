@@ -8,19 +8,13 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
-
-        # Inicializando os objetos
-        self.slot_machine = SlotMachine()
-        self.ui = UI()
-        self.audio = Audio()
-        self.assets = Assets()
-
-        # Inicializando a tela
         self.screen_width, self.screen_height = 492, 883
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Slot Machine - Fortune Tiger")
-
-        # Carregar música e sons
+        self.assets = Assets(self.screen_width, self.screen_height)
+        self.slot_machine = SlotMachine()
+        self.ui = UI()
+        self.audio = Audio()
         self.audio.play_background_music()
 
     def run(self):
@@ -29,6 +23,10 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.slot_machine.spin()
+
                 self.ui.handle_event(event)
 
             self.screen.blit(self.assets.background_image, (0, 0))
