@@ -19,10 +19,27 @@ class SlotMachine:
         self.current_slots = random.sample(range(len(self.symbols)), 9)
         self.current_suits = random.choices(['a', 'b', 'c', 'd', 'e', 'f'], k=9)
         self.highlighted_word_index = random.choice([3, 4, 5])
+        self.odd = 1
 
     def spin(self):
         self.current_slots = random.choices(range(len(self.symbols)), k=9)
         self.current_suits = random.choices(['a', 'b', 'c', 'd', 'e', 'f'], k=9)
+        self.calculate_odd()
+
+    def calculate_odd(self):
+        # Verifica os suits na linha central (índices 3, 4 e 5)
+        central_suits = self.current_suits[3:6]
+        suit_count = {suit: central_suits.count(suit) for suit in 'abcdef'}
+
+        # Verifica se algum suit aparece 3 vezes
+        for suit, count in suit_count.items():
+            if count == 3:
+                odd_values = {'a': 2, 'b': 5, 'c': 10, 'd': 25, 'e': 50, 'f': 100}
+                self.odd = odd_values[suit]
+                return
+
+        # Caso nenhum suit apareça 3 vezes, mantém o odd padrão
+        self.odd = 1
 
     def draw(self, screen):
         self.draw_slots(screen)

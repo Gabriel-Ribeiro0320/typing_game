@@ -26,6 +26,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.slot_machine.spin()
+                        self.ui.update_odd(self.slot_machine.odd)
 
                 self.ui.handle_event(event)
 
