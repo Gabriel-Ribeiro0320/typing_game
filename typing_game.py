@@ -5,7 +5,7 @@ import random
 pygame.init()
 
 pygame.mixer.init()
-pygame.mixer.music.load('assets/soundtrack.mp3')
+pygame.mixer.music.load('assets/audios/soundtrack.mp3')
 pygame.mixer.music.set_volume(0.2)
 pygame.mixer.music.play(-1)
 
@@ -27,9 +27,9 @@ DARK_GRAY = (50, 50, 50)
 
 # fonts
 
-title_font = pygame.font.Font("assets/gangof3.ttf", 60)
-subtitle_font = pygame.font.Font("assets/gangof3.ttf", 20)
-end_menu_font = pygame.font.Font("assets/gangof3.ttf", 40)
+title_font = pygame.font.Font("assets/text/gangof3.ttf", 60)
+subtitle_font = pygame.font.Font("assets/text/gangof3.ttf", 20)
+end_menu_font = pygame.font.Font("assets/text/gangof3.ttf", 40)
 font1 = pygame.font.SysFont(None, 60)
 font2 = pygame.font.SysFont(None, 20)
 font3 = pygame.font.SysFont(None, 40)
@@ -43,15 +43,15 @@ current_arrow_pos = None
 score = 0
 wrong_words = 0
 pressed_key = None
-background_image = pygame.image.load("assets/background1.jpg")
+background_image = pygame.image.load("assets/images/background1.jpg")
 background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
-background_image2 = pygame.image.load("assets/background2.jpg")
+background_image2 = pygame.image.load("assets/images/background2.jpg")
 background_image2 = pygame.transform.scale(background_image2, (screen_width, screen_height))
 
 # hands images
 
-left_hand_image = pygame.image.load("assets/left_hand.png")
-right_hand_image = pygame.image.load("assets/right_hand.png")
+left_hand_image = pygame.image.load("assets/images/left_hand.png")
+right_hand_image = pygame.image.load("assets/images/right_hand.png")
 left_hand_image = pygame.transform.scale(left_hand_image, (150, 150))
 right_hand_image = pygame.transform.scale(right_hand_image, (150, 150))
 left_hand_pos = (45, 325)
@@ -59,8 +59,8 @@ right_hand_pos = (1005, 325)
 
 # arrow images (red arrow for typing indication)
 
-left_hand_arrow_image = pygame.image.load("assets/right_arrow.png")
-right_hand_arrow_image = pygame.image.load("assets/left_arrow.png")
+left_hand_arrow_image = pygame.image.load("assets/images/right_arrow.png")
+right_hand_arrow_image = pygame.image.load("assets/images/left_arrow.png")
 left_hand_arrow_image = pygame.transform.scale(left_hand_arrow_image, (50, 50))
 right_hand_arrow_image = pygame.transform.scale(
     right_hand_arrow_image, (50, 50))
@@ -125,7 +125,7 @@ def generate_distinct_letters():
     return ''.join(letters)
 
 
-word_list = load_words_from_file('assets/br-sem-acentos.txt')
+word_list = load_words_from_file('assets/text/br-sem-acentos.txt')
 
 current_word = random.choice(word_list) if word_list else "No words"
 user_input = ""

@@ -2,7 +2,7 @@ import pygame
 
 class UI:
     def __init__(self):
-        self.font = pygame.font.Font("assets/gangof3.ttf", 20)
+        self.font = pygame.font.Font("assets/text/gangof3.ttf", 20)
         self.user_input = ""
         self.can_spin = True
 

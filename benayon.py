@@ -13,12 +13,12 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Slot Machine - Fortune Tiger")
 
 # load and play the background music
-pygame.mixer.music.load("assets/background_music.mp3")
+pygame.mixer.music.load("assets/audios/background_music.mp3")
 pygame.mixer.music.play(-1)  # -1 makes the music loop indefinitely
-roulette_sound = pygame.mixer.Sound("assets/roulette_sound.mp3")
+roulette_sound = pygame.mixer.Sound("assets/audios/roulette_sound.mp3")
 
 # load the background image
-background_image = pygame.image.load("assets/tigrinho.png")
+background_image = pygame.image.load("assets/images/tigrinho.png")
 background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
 # define colors
@@ -29,19 +29,19 @@ red = (255, 0, 0)
 orange = (255, 165, 0)
 
 # load words from file
-with open("assets/br-sem-acentos.txt", "r") as file:
+with open("assets/text/br-sem-acentos.txt", "r") as file:
     symbols = [line.strip() for line in file if line.strip() and len(line.strip()) <= 8]
 
 # define suit symbols
 suits = ['a', 'b', 'c', 'd', 'e', 'f']
 
 fruits_images = {
-    'a': pygame.image.load("assets/strawberry.png"),
-    'b': pygame.image.load("assets/cherry.png"),
-    'c': pygame.image.load("assets/banana.png"),
-    'd': pygame.image.load("assets/apple.png"),
-    'e': pygame.image.load("assets/lemon.png"),
-    'f': pygame.image.load("assets/orange.png"),
+    'a': pygame.image.load("assets/images/strawberry.png"),
+    'b': pygame.image.load("assets/images/cherry.png"),
+    'c': pygame.image.load("assets/images/banana.png"),
+    'd': pygame.image.load("assets/images/apple.png"),
+    'e': pygame.image.load("assets/images/lemon.png"),
+    'f': pygame.image.load("assets/images/orange.png"),
 }
 
 # slot machine settings
@@ -68,7 +68,7 @@ current_suits = random.choices(suits, k=9)  # Pick 9 random suits at start
 
 # font settings
 
-china_font = pygame.font.Font("assets/gangof3.ttf", 20)
+china_font = pygame.font.Font("assets/text/gangof3.ttf", 20)
 suit_font = pygame.font.Font(None, 20)  # Smaller font for suits
 suits_odd_font = pygame.font.Font(None, 40)  # Font for displaying suits_odd
 

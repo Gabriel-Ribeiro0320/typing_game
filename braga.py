@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Slot Machine - Fortune Tiger")
 
 # load the background image
-background_image = pygame.image.load("assets/tigrinho.png")
+background_image = pygame.image.load("assets/images/tigrinho.png")
 background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
 # define colors
@@ -23,7 +23,7 @@ red = (255, 0, 0)
 orange = (255, 165, 0)
 
 # load words from file
-with open("assets/br-sem-acentos.txt", "r") as file:
+with open("assets/text/br-sem-acentos.txt", "r") as file:
     symbols = [line.strip() for line in file if line.strip() and len(line.strip()) <= 8]
 
 # define suit symbols (naipes)
