@@ -11,22 +11,17 @@ class UI:
             if event.key == pygame.K_SPACE and self.can_spin:
                 self.can_spin = False
             elif event.key == pygame.K_BACKSPACE:
-                # Remove o último caractere
                 self.user_input = self.user_input[:-1]
             elif event.key == pygame.K_RETURN:
-                # Verifica o que foi digitado quando o Enter é pressionado
                 self.check_user_input()
             else:
-                # Adiciona o caractere digitado ao input do usuário (evita caracteres especiais)
                 if event.unicode.isprintable():
                     self.user_input += event.unicode
 
     def check_user_input(self):
-        # Aqui você pode processar a entrada do usuário
         print(f"Entrada do usuário: {self.user_input}")
 
     def draw_input_box(self, screen):
-        # Renderiza o texto digitado pelo usuário
         input_text_surface = self.font.render(self.user_input, True, (255, 255, 255))
         screen.blit(input_text_surface, (205, 630))
 
