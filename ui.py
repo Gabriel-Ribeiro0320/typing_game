@@ -6,11 +6,15 @@ class UI:
         self.user_input = ""
         self.can_spin = True
         self.current_odd = 1
+        self.total_score = 0
 
     def handle_event(self, event, slot_machine):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                # Usa o índice correto para obter a palavra destacada
+                slot_machine.spin()
+                self.current_odd = slot_machine.odd
+                self.update_total_score(slot_machine.odd)
+                self.can_spin = False
                 highlighted_index = slot_machine.highlighted_word_index
                 symbol_index = slot_machine.current_slots[highlighted_index]
                 selected_word = slot_machine.symbols[symbol_index]
@@ -44,17 +48,20 @@ class UI:
     def update_odd(self, odd):
         self.current_odd = odd
 
+    def update_total_score(self, odd):
+        self.total_score += 100 * odd
+
     def draw_odd(self, screen):
         odd_text = f"ODD: {self.current_odd}"
         odd_surface = self.font.render(odd_text, True, (255, 255, 255))
         screen.blit(odd_surface, (50, 707))
 
     def draw_score(self, screen):
-        score_text = f"SCORE: 100"
+        score_text = f"SCORE: {100 * self.current_odd}"
         score_surface = self.font.render(score_text, True, (255, 255, 255))
         screen.blit(score_surface, (205, 707))
 
     def draw_total_score(self, screen):
-        total_score_text = f"TOTAL: 500"
+        total_score_text = f"TOTAL: {self.total_score}"
         total_score_surface = self.font.render(total_score_text, True, (255, 255, 255))
         screen.blit(total_score_surface, (370, 707))
