@@ -11,3 +11,5 @@ class Audio:
 
     def play_roulette_sound(self):
         self.roulette_sound.play()
+
+

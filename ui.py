@@ -57,7 +57,5 @@ class UI:
         total_score_surface = self.font.render(total_score_text, True, (255, 255, 255))
         screen.blit(total_score_surface, (370, 707))
 
-    def play_roulette_sound(self):
-        """Reproduz o som da roleta."""
-        self.roulette_sound.play()
+
 
