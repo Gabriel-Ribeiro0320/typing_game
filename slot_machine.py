@@ -24,6 +24,7 @@ class SlotMachine:
     def spin(self):
         self.current_slots = random.choices(range(len(self.symbols)), k=9)
         self.current_suits = random.choices(['a', 'b', 'c', 'd', 'e', 'f'], k=9)
+        self.highlighted_word_index = random.choice([3, 4, 5])  # Atualiza o índice destacado
         self.calculate_odd()
 
     def calculate_odd(self):
@@ -47,7 +48,8 @@ class SlotMachine:
 
     def draw_slots(self, screen):
         for i, pos in enumerate(self.slot_grid):
-            symbol_text = self.symbols[self.current_slots[i]]
+            symbol_index = self.current_slots[i]  # Pega o índice real do símbolo
+            symbol_text = self.symbols[symbol_index]  # Obtém o texto do símbolo
             color = (0, 255, 0) if i == self.highlighted_word_index else (255, 255, 255)
             font = pygame.font.Font("assets/text/gangof3.ttf", 20)
             text_surface = font.render(symbol_text, True, color)

@@ -7,10 +7,25 @@ class UI:
         self.can_spin = True
         self.current_odd = 1
 
-    def handle_event(self, event):
+    def handle_event(self, event, slot_machine):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and self.can_spin:
-                self.can_spin = False
+            if event.key == pygame.K_SPACE:
+                # Usa o índice correto para obter a palavra destacada
+                highlighted_index = slot_machine.highlighted_word_index
+                symbol_index = slot_machine.current_slots[highlighted_index]
+                selected_word = slot_machine.symbols[symbol_index]
+
+                print(f"Índice destacado: {highlighted_index}")
+                print(f"Índice do símbolo: {symbol_index}")
+                print(f"Palavra destacada: {selected_word}")
+
+                if self.user_input.strip() == selected_word:
+                    slot_machine.spin()
+                    self.user_input = ""
+                    self.can_spin = True
+                else:
+                    print("Palavra incorreta!")
+                    self.can_spin = False
             elif event.key == pygame.K_BACKSPACE:
                 self.user_input = self.user_input[:-1]
             elif event.key == pygame.K_RETURN:

@@ -23,12 +23,8 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.slot_machine.spin()
-                        self.ui.update_odd(self.slot_machine.odd)
-
-                self.ui.handle_event(event)
+                else:
+                    self.ui.handle_event(event, self.slot_machine)  # Passa o slot_machine
 
             self.screen.blit(self.assets.background_image, (0, 0))
             self.slot_machine.draw(self.screen)

@@ -115,7 +115,7 @@ def check_user_input():
         if user_input == correct_word:
             spin_slots()
             highlight_random_middle_word()
-            user_input = ""
+            user_input = ""  #
             can_spin = True
         else:
             can_spin = False
