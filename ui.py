@@ -16,7 +16,6 @@ class UI:
                     highlighted_index = slot_machine.highlighted_word_index
                     symbol_index = slot_machine.current_slots[highlighted_index]
                     selected_word = slot_machine.symbols[symbol_index]
-
                     if self.user_input.strip() == selected_word:
                         self.roulette_sound.play()
                         self.user_input = ""
@@ -28,6 +27,7 @@ class UI:
                         self.can_spin = False
             elif event.key == pygame.K_BACKSPACE:
                 self.user_input = self.user_input[:-1]
+                self.can_spin = True
             else:
                 if event.unicode.isprintable():
                     self.user_input += event.unicode

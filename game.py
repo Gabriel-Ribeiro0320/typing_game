@@ -24,7 +24,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
                 else:
-                    self.ui.handle_event(event, self.slot_machine)  # Passa o slot_machine
+                    self.ui.handle_event(event, self.slot_machine)
 
             self.screen.blit(self.assets.background_image, (0, 0))
             self.slot_machine.draw(self.screen)
